@@ -61,7 +61,13 @@ export default function TossKeyScreen() {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          <BackButton onPress={() => router.back()} />
+          <BackButton
+            onPress={() =>
+              router.canGoBack()
+                ? router.back()
+                : router.replace("/onboarding/intro")
+            }
+          />
 
           <View style={{ marginTop: 14 }}>
             <StepIndicator current={2} />

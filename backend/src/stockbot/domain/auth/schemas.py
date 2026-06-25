@@ -24,3 +24,9 @@ class AccountInfo(BaseModel):
 class TossConnectResponse(BaseModel):
     connected: bool = True
     account: AccountInfo
+
+
+class AuthStatusResponse(BaseModel):
+    """Launch-gate status: whether a Toss account is connected."""
+
+    connected: bool

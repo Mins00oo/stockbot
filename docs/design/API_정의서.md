@@ -39,7 +39,7 @@
 
 ---
 
-## 3. 엔드포인트 (오늘 범위 4개)
+## 3. 엔드포인트 (오늘 범위 5개)
 
 ### ① `GET /health` — 헬스체크
 - 헤더: 없음 · 바디: 없음
@@ -63,6 +63,13 @@
   { "connected": true, "account": { "seq": "12345678", "name": "토스증권 계좌" } }
   ```
 - 에러: **400** `TOSS_AUTH_FAILED`(토스 키 거부) · **422** `VALIDATION_ERROR`(바디 누락) · **401** `UNAUTHORIZED` · **502** `TOSS_UNAVAILABLE`
+
+### ③-2 `GET /auth/status` — 연결 상태 (앱 실행 게이트)
+- 헤더: `X-Pairing-Key`
+- 바디: 없음
+- 동작: 백엔드 DB에 토스 자격증명(암호화 키)이 있는지로 연결 여부 판단. 앱이 실행 시 호출해 **연결됨→홈 / 미연결→2단계(toss-key)** 로 라우팅.
+- **200**: `{ "connected": true }` (미연결이면 `false`)
+- 에러: **401** `UNAUTHORIZED`
 
 ### ④ `GET /portfolio/holdings` — 보유 종목 (홈)
 - 헤더: `X-Pairing-Key`
@@ -114,7 +121,7 @@
 ---
 
 ## 4. 범위
-- **오늘**: 위 4개 (health · pairing/verify · toss/connect · portfolio/holdings)
+- **오늘**: 위 5개 (health · pairing/verify · toss/connect · auth/status · portfolio/holdings)
 - **나중**: stocks(검색) · market(시세·급변) · news · analysis · alerts · reports · calendar · chat 등 도메인 엔드포인트 추가 시 이 문서에 이어 작성.
 
 ## 5. 연동 메모

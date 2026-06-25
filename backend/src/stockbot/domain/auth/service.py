@@ -20,6 +20,7 @@ from stockbot.core.security import encrypt
 from stockbot.domain.auth import repository
 from stockbot.domain.auth.schemas import (
     AccountInfo,
+    AuthStatusResponse,
     TossConnectRequest,
     TossConnectResponse,
 )
@@ -61,3 +62,13 @@ async def connect_toss(
         connected=True,
         account=AccountInfo(seq=account_seq, name=_ACCOUNT_DISPLAY_NAME),
     )
+
+
+async def get_status(session: AsyncSession) -> AuthStatusResponse:
+    """Connection status = whether the encrypted credentials row exists.
+
+    The backend is the source of truth for "connected" (the app's launch gate
+    asks this instead of trusting a local flag that resets on relaunch).
+    """
+    creds = await repository.get_credentials(session)
+    return AuthStatusResponse(connected=creds is not None)

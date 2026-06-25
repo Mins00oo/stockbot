@@ -47,6 +47,12 @@ export const TossConnectResponseSchema = z.object({
 });
 export type TossConnectResponse = z.infer<typeof TossConnectResponseSchema>;
 
+/* ---------- GET /auth/status (launch gate) ---------- */
+export const AuthStatusResponseSchema = z.object({
+  connected: z.boolean(),
+});
+export type AuthStatusResponse = z.infer<typeof AuthStatusResponseSchema>;
+
 /* ---------- ④ GET /portfolio/holdings ---------- */
 export const MarketSchema = z.enum(["KR", "US"]);
 export type Market = z.infer<typeof MarketSchema>;

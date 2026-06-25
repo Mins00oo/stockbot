@@ -12,6 +12,7 @@ from stockbot.core.db import get_session
 from stockbot.core.security import verify_pairing_key
 from stockbot.domain.auth import service
 from stockbot.domain.auth.schemas import (
+    AuthStatusResponse,
     PairingVerifyResponse,
     TossConnectRequest,
     TossConnectResponse,
@@ -41,3 +42,15 @@ async def connect_toss(
 ) -> TossConnectResponse:
     """Onboarding step 2: connect the Toss account using app/secret keys."""
     return await service.connect_toss(session, body)
+
+
+@router.get(
+    "/status",
+    response_model=AuthStatusResponse,
+    dependencies=[Depends(verify_pairing_key)],
+)
+async def auth_status(
+    session: AsyncSession = Depends(get_session),
+) -> AuthStatusResponse:
+    """Whether the Toss account is connected — used by the app's launch gate."""
+    return await service.get_status(session)
