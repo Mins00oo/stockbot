@@ -18,14 +18,21 @@
     ],
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.stockbot.app"
+      "bundleIdentifier": "com.stockbot.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.stockbot.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#3182F6"
-      }
+      },
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -41,6 +48,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1a2d616f-b17f-4ded-8297-fd9866377a99"
+      }
     }
   }
 }

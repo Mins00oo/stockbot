@@ -43,3 +43,7 @@
 ## 설치 시 `EBADENGINE`(Unsupported engine) 경고 / `expo start`가 안 됨
 - 원인: **Node 버전이 낮음.** Expo SDK56·RN0.85는 Node `20.19.4+`(또는 22/24) 필요.
 - 해결: **Node 22 LTS로 업그레이드** (`winget install OpenJS.NodeJS.LTS` 또는 nodejs.org) → 새 터미널 → `node --version` 확인 → `npm install` 다시.
+
+## Postgres(도커)가 `"in 18+, these Docker images ... /var/lib/postgresql/data (unused mount/volume)"` 에러
+- 원인: **PG18+는 볼륨을 `/var/lib/postgresql`에 마운트**해야 하는데, 옛 방식 `/var/lib/postgresql/data`로 돼 있을 때. (`docker-compose.yml`은 이미 수정됨)
+- 해결(아직 실데이터 없을 때): `docker compose down -v`(잘못된 볼륨 제거) → `docker compose up -d`(올바르게 재초기화) → `uv run alembic upgrade head`.

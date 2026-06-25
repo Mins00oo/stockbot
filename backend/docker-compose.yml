@@ -9,7 +9,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - stockbot_pgdata:/var/lib/postgresql/data
+      # PG18+ 규칙: /var/lib/postgresql 에 마운트(내부에 버전별 하위폴더로 저장). 17 이하의 /data 아님.
+      - stockbot_pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U stockbot -d stockbot"]
       interval: 5s
