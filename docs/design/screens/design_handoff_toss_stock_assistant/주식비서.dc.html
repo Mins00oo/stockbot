@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; font-family: Pretendard, -apple-system, sans-serif; }
+  @keyframes scrIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pop { from { opacity:0; transform: scale(.8); } to { opacity:1; transform: scale(1); } }
+  @keyframes bubble { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+  .scr::-webkit-scrollbar { width: 0; height: 0; }
+  input { font-family: Pretendard, sans-serif; }
+</style>
+</helmet>
+<div style="min-height:100vh; background:#E5E8EB; display:flex; flex-direction:column; align-items:center; padding:28px 20px 48px; font-family:Pretendard, sans-serif;">
+
+  <div style="padding:11px; background:#0B0F14; border-radius:52px; box-shadow:0 30px 60px rgba(0,0,0,.26), inset 0 0 0 2px #23282F;">
+    <div style="width:390px; height:844px; border-radius:42px; overflow:hidden; background:#F2F4F6; position:relative; display:flex; flex-direction:column;">
+
+      <!-- status bar -->
+      <div style="height:50px; flex:none; display:flex; align-items:center; justify-content:space-between; padding:0 28px; position:relative; z-index:5;">
+        <div style="font-size:15px; font-weight:700; color:#191F28; letter-spacing:-0.3px;">9:41</div>
+        <div style="position:absolute; left:50%; top:11px; transform:translateX(-50%); width:108px; height:30px; background:#000; border-radius:18px;"></div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <div style="display:flex; align-items:flex-end; gap:2px; height:11px;">
+            <div style="width:3px; height:5px; background:#191F28; border-radius:1px;"></div>
+            <div style="width:3px; height:7px; background:#191F28; border-radius:1px;"></div>
+            <div style="width:3px; height:9px; background:#191F28; border-radius:1px;"></div>
+            <div style="width:3px; height:11px; background:#191F28; border-radius:1px;"></div>
+          </div>
+          <div style="font-size:12px; font-weight:700; color:#191F28;">5G</div>
+          <div style="width:24px; height:12px; border:1.5px solid #191F28; border-radius:3px; padding:1.5px;">
+            <div style="height:100%; width:78%; background:#191F28; border-radius:1px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ ONBOARDING ============ -->
+      <sc-if value="{{ isOnboard }}" hint-placeholder-val="{{ true }}">
+        <div class="scr" style="flex:1; overflow-y:auto; animation:scrIn .3s ease;">
+
+          <sc-if value="{{ onb0 }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:32px 28px; display:flex; flex-direction:column; min-height:760px;">
+              <div style="margin-top:40px; width:64px; height:64px; border-radius:20px; background:#3182F6; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px rgba(49,130,246,.3);">
+                <div style="width:26px; height:26px; border:4px solid #fff; border-radius:8px; border-top-color:transparent; transform:rotate(45deg);"></div>
+              </div>
+              <div style="margin-top:28px; font-size:28px; font-weight:800; color:#191F28; line-height:1.32; letter-spacing:-0.7px;">토스증권 계좌를<br>연동하고<br>내 주식 비서를 만들어요</div>
+              <div style="margin-top:16px; font-size:16px; color:#6B7684; line-height:1.55; letter-spacing:-0.3px;">보유 종목을 한눈에 보고, AI가 포트폴리오를<br>분석해 디스코드로 알려드려요.</div>
+              <div style="margin-top:36px; display:flex; flex-direction:column; gap:14px;">
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                  <div style="width:40px; height:40px; flex:none; border-radius:12px; background:#EAF2FE; display:flex; align-items:center; justify-content:center; font-size:18px;">📈</div>
+                  <div><div style="font-size:15px; font-weight:700; color:#191F28;">실시간 보유 현황</div><div style="font-size:13px; color:#8B95A1; margin-top:2px;">계좌 연동만으로 종목·평가손익 자동 동기화</div></div>
+                </div>
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                  <div style="width:40px; height:40px; flex:none; border-radius:12px; background:#F1ECFF; display:flex; align-items:center; justify-content:center; font-size:18px;">🤖</div>
+                  <div><div style="font-size:15px; font-weight:700; color:#191F28;">AI 포트폴리오 분석</div><div style="font-size:13px; color:#8B95A1; margin-top:2px;">집중도·리스크를 진단하고 리밸런싱 제안</div></div>
+                </div>
+                <div style="display:flex; gap:14px; align-items:flex-start;">
+                  <div style="width:40px; height:40px; flex:none; border-radius:12px; background:#E6F7F0; display:flex; align-items:center; justify-content:center; font-size:18px;">🔔</div>
+                  <div><div style="font-size:15px; font-weight:700; color:#191F28;">디스코드 알림</div><div style="font-size:13px; color:#8B95A1; margin-top:2px;">가격 급변·AI 인사이트를 원하는 채널로</div></div>
+                </div>
+              </div>
+              <div style="flex:1;"></div>
+              <div onClick="{{ onbToPairing }}" style="margin-top:32px; height:56px; border-radius:16px; background:#3182F6; color:#fff; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; letter-spacing:-0.3px; cursor:pointer;">연결 시작하기</div>
+              <div style="margin-top:12px; text-align:center; font-size:12px; color:#B0B8C1;">앱 페어링 키와 토스증권 오픈 API 키가 필요해요</div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 1: APP PAIRING KEY -->
+          <sc-if value="{{ onb1 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 28px 32px; display:flex; flex-direction:column; min-height:760px;">
+              <div onClick="{{ onbBackToIntro }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28; margin-left:-6px;">‹</div>
+
+              <div style="margin-top:14px; display:flex; align-items:center; gap:8px;">
+                <div style="font-size:12px; font-weight:800; color:#fff; background:#3182F6; padding:4px 10px; border-radius:8px;">1단계</div>
+                <div style="font-size:12px; font-weight:700; color:#B0B8C1;">2단계 · 토스증권 API</div>
+              </div>
+
+              <div style="margin-top:16px; font-size:26px; font-weight:800; color:#191F28; line-height:1.34; letter-spacing:-0.6px;">앱 페어링 키를<br>입력해 주세요</div>
+              <div style="margin-top:14px; font-size:14.5px; color:#6B7684; line-height:1.55; letter-spacing:-0.3px;">내 주식 비서(AI)와 앱을 연결하는 키예요.<br>디스코드 봇의 <span style="font-weight:700; color:#4E5968;">/페어링</span> 명령으로 발급받을 수 있어요.</div>
+
+              <div style="margin-top:30px;">
+                <div style="font-size:13px; font-weight:700; color:#4E5968; margin-bottom:8px;">페어링 키</div>
+                <div style="height:54px; border-radius:14px; background:#fff; border:1.5px solid {{ pairBorder }}; display:flex; align-items:center; padding:0 16px; transition:border-color .15s;">
+                  <input value="{{ pairKey }}" onInput="{{ onPairKey }}" placeholder="예: TOSS-AI-XXXX-XXXX" style="flex:1; border:none; outline:none; font-size:15px; color:#191F28; background:transparent; letter-spacing:0.5px;" />
+                  <sc-if value="{{ pairOk }}" hint-placeholder-val="{{ false }}"><span style="font-size:16px; color:#12B886;">✓</span></sc-if>
+                  <sc-if value="{{ pairVerifying }}" hint-placeholder-val="{{ false }}"><div style="width:16px; height:16px; border:2.5px solid #E5E8EB; border-top-color:#3182F6; border-radius:50%; animation:spin .8s linear infinite;"></div></sc-if>
+                </div>
+                <sc-if value="{{ pairError }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:8px; font-size:12.5px; color:#F04452; font-weight:600;">페어링 키가 올바르지 않아요. 디스코드에서 다시 확인해 주세요.</div>
+                </sc-if>
+              </div>
+
+              <div style="margin-top:18px; background:#F1ECFF; border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+                <div style="font-size:15px; line-height:1.3;">🤖</div>
+                <div style="font-size:12.5px; color:#6B7684; line-height:1.55; letter-spacing:-0.2px;">페어링이 완료되면 AI 분석 결과와 알림이 연결된 디스코드 채널로 전달돼요.</div>
+              </div>
+
+              <div style="flex:1; min-height:20px;"></div>
+              <div onClick="{{ submitPair }}" style="margin-top:24px; height:56px; border-radius:16px; background:{{ pairBtnBg }}; color:{{ pairBtnColor }}; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; cursor:{{ pairCursor }}; transition:all .15s;">{{ pairBtnLabel }}</div>
+              <div onClick="{{ fillPairDemo }}" style="margin-top:12px; text-align:center; font-size:12.5px; color:#3182F6; font-weight:600; cursor:pointer;">데모 페어링 키로 채우기</div>
+            </div>
+          </sc-if>
+
+          <!-- STEP 2: TOSS API KEY -->
+          <sc-if value="{{ onb2 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 28px 32px; display:flex; flex-direction:column; min-height:760px;">
+              <div onClick="{{ onbBackToPairing }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28; margin-left:-6px;">‹</div>
+
+              <div style="margin-top:14px; display:flex; align-items:center; gap:8px;">
+                <div style="display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#12B886;"><span style="font-size:13px;">✓</span>1단계 완료</div>
+                <div style="font-size:12px; font-weight:800; color:#fff; background:#3182F6; padding:4px 10px; border-radius:8px;">2단계</div>
+              </div>
+
+              <div style="margin-top:16px; font-size:26px; font-weight:800; color:#191F28; line-height:1.34; letter-spacing:-0.6px;">토스증권 오픈 API<br>키를 입력해 주세요</div>
+              <div style="margin-top:14px; font-size:14.5px; color:#6B7684; line-height:1.55; letter-spacing:-0.3px;">토스증권 개발자센터에서 발급받은 App Key와<br>Secret Key를 입력하면 계좌가 연결돼요.</div>
+
+              <div style="margin-top:30px;">
+                <div style="font-size:13px; font-weight:700; color:#4E5968; margin-bottom:8px;">App Key</div>
+                <div style="height:54px; border-radius:14px; background:#fff; border:1.5px solid {{ appKeyBorder }}; display:flex; align-items:center; padding:0 16px; transition:border-color .15s;">
+                  <input value="{{ appKey }}" onInput="{{ onAppKey }}" placeholder="발급받은 App Key 입력" style="flex:1; border:none; outline:none; font-size:15px; color:#191F28; background:transparent; letter-spacing:-0.2px;" />
+                  <sc-if value="{{ appKeyDone }}" hint-placeholder-val="{{ false }}"><span style="font-size:16px; color:#12B886;">✓</span></sc-if>
+                </div>
+              </div>
+
+              <div style="margin-top:18px;">
+                <div style="font-size:13px; font-weight:700; color:#4E5968; margin-bottom:8px;">Secret Key</div>
+                <div style="height:54px; border-radius:14px; background:#fff; border:1.5px solid {{ secretBorder }}; display:flex; align-items:center; padding:0 16px; transition:border-color .15s;">
+                  <input value="{{ secretKey }}" onInput="{{ onSecretKey }}" type="{{ secretType }}" placeholder="발급받은 Secret Key 입력" style="flex:1; border:none; outline:none; font-size:15px; color:#191F28; background:transparent;" />
+                  <div onClick="{{ toggleSecret }}" style="font-size:13px; font-weight:600; color:#8B95A1; cursor:pointer; padding-left:8px;">{{ secretToggleLabel }}</div>
+                </div>
+              </div>
+
+              <div style="margin-top:18px; background:#F1F4F8; border-radius:14px; padding:14px 16px; display:flex; gap:10px; align-items:flex-start;">
+                <div style="font-size:15px; line-height:1.3;">🔒</div>
+                <div style="font-size:12.5px; color:#6B7684; line-height:1.55; letter-spacing:-0.2px;">키는 암호화되어 기기에만 저장되며, 시세·잔고 조회에만 사용돼요. 주문 권한은 요청하지 않아요.</div>
+              </div>
+
+              <div style="flex:1; min-height:20px;"></div>
+              <div onClick="{{ submitKeys }}" style="margin-top:24px; height:56px; border-radius:16px; background:{{ connectBtnBg }}; color:{{ connectBtnColor }}; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:{{ connectCursor }}; transition:all .15s;">연결하기</div>
+              <div onClick="{{ fillDemo }}" style="margin-top:12px; text-align:center; font-size:12.5px; color:#3182F6; font-weight:600; cursor:pointer;">데모 키로 채우기</div>
+            </div>
+          </sc-if>
+
+          <!-- LOADING -->
+          <sc-if value="{{ onb3 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:32px 28px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:720px;">
+              <div style="width:72px; height:72px; border:6px solid #EAF2FE; border-top-color:#3182F6; border-radius:50%; animation:spin .9s linear infinite;"></div>
+              <div style="margin-top:28px; font-size:20px; font-weight:800; color:#191F28; letter-spacing:-0.4px;">{{ loadingTitle }}</div>
+              <div style="margin-top:10px; font-size:14px; color:#8B95A1;">{{ loadingSub }}</div>
+              <div style="margin-top:32px; width:200px; display:flex; flex-direction:column; gap:12px;">
+                <sc-for list="{{ loadSteps }}" as="ls" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:20px; height:20px; flex:none; border-radius:50%; background:{{ ls.bg }}; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff;">{{ ls.mark }}</div>
+                    <div style="font-size:13.5px; color:{{ ls.color }}; font-weight:{{ ls.weight }};">{{ ls.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- SUCCESS -->
+          <sc-if value="{{ onb4 }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:32px 28px; display:flex; flex-direction:column; min-height:760px;">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div style="width:88px; height:88px; border-radius:50%; background:#3182F6; display:flex; align-items:center; justify-content:center; animation:pop .4s ease;">
+                  <div style="width:34px; height:18px; border-left:5px solid #fff; border-bottom:5px solid #fff; transform:rotate(-45deg); margin-top:-6px;"></div>
+                </div>
+                <div style="margin-top:26px; font-size:24px; font-weight:800; color:#191F28; letter-spacing:-0.5px;">연동이 완료됐어요</div>
+                <div style="margin-top:10px; font-size:15px; color:#6B7684; text-align:center; line-height:1.5;">토스증권 계좌의 보유 종목 7개를<br>불러왔어요.</div>
+                <div style="margin-top:24px; background:#fff; border-radius:16px; padding:18px 20px; width:100%; display:flex; align-items:center; justify-content:space-between;">
+                  <div><div style="font-size:13px; color:#8B95A1;">총 평가금액</div><div style="font-size:22px; font-weight:800; color:#191F28; margin-top:2px;">{{ totalValueStr }}</div></div>
+                  <div style="text-align:right;"><div style="font-size:13px; color:#8B95A1;">평가손익</div><div style="margin-top:2px;">{{ totalGainEl }}</div></div>
+                </div>
+              </div>
+              <div onClick="{{ onbFinish }}" style="margin-top:24px; height:56px; border-radius:16px; background:#3182F6; color:#fff; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;">시작하기</div>
+            </div>
+          </sc-if>
+
+        </div>
+      </sc-if>
+
+      <!-- ============ APP CONTENT ============ -->
+      <sc-if value="{{ inApp }}" hint-placeholder-val="{{ false }}">
+        <div class="scr" style="flex:1; overflow-y:auto; position:relative;">
+
+          <!-- ===== HOME ===== -->
+          <sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:8px 0 28px;">
+              <div style="padding:6px 20px 0; display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-size:22px; font-weight:800; color:#191F28; letter-spacing:-0.5px;">내 투자</div>
+                <div onClick="{{ goExplore }}" style="width:26px; height:26px; position:relative; cursor:pointer;">
+                  <div style="width:17px; height:17px; border:2.4px solid #4E5968; border-radius:50%;"></div>
+                  <div style="position:absolute; width:8px; height:2.4px; background:#4E5968; border-radius:2px; bottom:2px; right:0; transform:rotate(45deg);"></div>
+                </div>
+              </div>
+
+              <div style="margin:16px 20px 0; background:#fff; border-radius:20px; padding:24px 22px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="font-size:14px; color:#8B95A1; font-weight:600;">총 평가금액</div>
+                <div style="font-size:32px; font-weight:800; color:#191F28; margin-top:6px; letter-spacing:-1px;">{{ totalValueStr }}</div>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">{{ totalGainEl }}<div style="font-size:13px; color:#B0B8C1;">투자원금 {{ totalCostStr }}</div></div>
+                <div onClick="{{ goAI }}" style="margin-top:18px; height:48px; border-radius:14px; background:#EAF2FE; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+                  <span style="font-size:16px;">🤖</span><span style="font-size:15px; font-weight:700; color:#3182F6;">AI 포트폴리오 분석 받기</span>
+                </div>
+              </div>
+
+              <div style="margin:12px 20px 0; display:flex; gap:10px;">
+                <div onClick="{{ goReports }}" style="flex:1; background:#fff; border-radius:16px; padding:16px 12px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer;">
+                  <div style="width:40px; height:40px; border-radius:13px; background:#F1ECFF; display:flex; align-items:center; justify-content:center; font-size:19px;">📄</div>
+                  <div style="font-size:13px; font-weight:700; color:#191F28;">AI 리포트</div>
+                </div>
+                <div onClick="{{ goCalendar }}" style="flex:1; background:#fff; border-radius:16px; padding:16px 12px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer;">
+                  <div style="width:40px; height:40px; border-radius:13px; background:#E6F7F0; display:flex; align-items:center; justify-content:center; font-size:19px;">📅</div>
+                  <div style="font-size:13px; font-weight:700; color:#191F28;">실적·배당</div>
+                </div>
+                <div onClick="{{ goExplore }}" style="flex:1; background:#fff; border-radius:16px; padding:16px 12px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer;">
+                  <div style="width:40px; height:40px; border-radius:13px; background:#FFF4E6; display:flex; align-items:center; justify-content:center; font-size:19px;">🧭</div>
+                  <div style="font-size:13px; font-weight:700; color:#191F28;">탐색</div>
+                </div>
+              </div>
+
+              <div style="padding:26px 20px 10px; display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-size:17px; font-weight:800; color:#191F28;">보유 종목 {{ holdingsCount }}</div>
+                <div style="font-size:13px; color:#8B95A1; font-weight:600;">평가금액순</div>
+              </div>
+
+              <div style="margin:0 12px; background:#fff; border-radius:18px; padding:6px 8px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <sc-for list="{{ holdings }}" as="h" hint-placeholder-count="5">
+                  <div onClick="{{ h.open }}" style="display:flex; align-items:center; gap:14px; padding:14px 12px; cursor:pointer; border-radius:14px;" style-hover="background:#F7F8FA;">
+                    <div style="width:42px; height:42px; flex:none; border-radius:13px; background:{{ h.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; font-weight:800;">{{ h.logoText }}</div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:15px; font-weight:700; color:#191F28; letter-spacing:-0.3px;">{{ h.name }}</div>
+                      <div style="font-size:12.5px; color:#8B95A1; margin-top:2px;">{{ h.sub }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                      <div style="font-size:15px; font-weight:700; color:#191F28;">{{ h.valueStr }}</div>
+                      <div style="margin-top:2px;">{{ h.changeEl }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== EXPLORE / MARKET ===== -->
+          <sc-if value="{{ isExplore }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:8px 0 28px;">
+              <div style="padding:6px 20px 0;"><div style="font-size:22px; font-weight:800; color:#191F28; letter-spacing:-0.5px;">탐색</div></div>
+
+              <!-- search -->
+              <div style="margin:16px 20px 0; height:48px; background:#fff; border-radius:14px; display:flex; align-items:center; gap:10px; padding:0 16px; box-shadow:0 2px 8px rgba(0,0,0,.04);">
+                <div style="width:18px; height:18px; position:relative; flex:none;">
+                  <div style="width:13px; height:13px; border:2.2px solid #8B95A1; border-radius:50%;"></div>
+                  <div style="position:absolute; width:6px; height:2.2px; background:#8B95A1; border-radius:2px; bottom:1px; right:0; transform:rotate(45deg);"></div>
+                </div>
+                <input value="{{ query }}" onChange="{{ onSearch }}" placeholder="종목명 · 티커 검색" style="flex:1; border:none; outline:none; font-size:15px; color:#191F28; background:transparent;" />
+                <sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ clearQuery }}" style="width:18px; height:18px; border-radius:50%; background:#E5E8EB; color:#6B7684; display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer;">✕</div>
+                </sc-if>
+              </div>
+
+              <!-- market filter chips -->
+              <div style="margin-top:14px; padding:0 20px; display:flex; gap:8px; overflow-x:auto;">
+                <sc-for list="{{ marketChips }}" as="c" hint-placeholder-count="4">
+                  <div onClick="{{ c.click }}" style="flex:none; padding:8px 16px; border-radius:999px; font-size:13.5px; font-weight:700; cursor:pointer; background:{{ c.bg }}; color:{{ c.color }};">{{ c.label }}</div>
+                </sc-for>
+              </div>
+
+              <div style="padding:18px 20px 8px; font-size:13px; color:#8B95A1; font-weight:600;">{{ exploreHeader }}</div>
+
+              <div style="margin:0 12px; background:#fff; border-radius:18px; padding:6px 8px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <sc-for list="{{ exploreItems }}" as="e" hint-placeholder-count="8">
+                  <div style="display:flex; align-items:center; gap:13px; padding:13px 12px;">
+                    <div onClick="{{ e.open }}" style="display:flex; align-items:center; gap:13px; flex:1; min-width:0; cursor:pointer;">
+                      <div style="width:40px; height:40px; flex:none; border-radius:12px; background:{{ e.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:15px; font-weight:800;">{{ e.logoText }}</div>
+                      <div style="flex:1; min-width:0;">
+                        <div style="display:flex; align-items:center; gap:6px;"><span style="font-size:15px; font-weight:700; color:#191F28;">{{ e.name }}</span>{{ e.heldTag }}</div>
+                        <div style="font-size:12px; color:#8B95A1; margin-top:2px;">{{ e.sub }}</div>
+                      </div>
+                      <div style="text-align:right;"><div style="font-size:14.5px; font-weight:700; color:#191F28;">{{ e.priceStr }}</div><div style="margin-top:2px;">{{ e.changeEl }}</div></div>
+                    </div>
+                    <div onClick="{{ e.toggle }}" style="width:32px; height:32px; flex:none; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ e.starEl }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ exploreEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:48px 20px; text-align:center;"><div style="font-size:15px; font-weight:700; color:#4E5968;">검색 결과가 없어요</div><div style="font-size:13px; color:#8B95A1; margin-top:4px;">다른 종목명이나 티커로 검색해 보세요</div></div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== DETAIL ===== -->
+          <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding-bottom:110px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 18px 10px;">
+                <div onClick="{{ back }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28;">‹</div>
+                <div style="font-size:15px; font-weight:700; color:#191F28;">{{ stock.name }}</div>
+                <div onClick="{{ stock.toggleWatch }}" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ stock.starEl }}</div>
+              </div>
+
+              <div style="padding:14px 22px 0;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <div style="width:46px; height:46px; border-radius:14px; background:{{ stock.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; font-weight:800;">{{ stock.logoText }}</div>
+                  <div><div style="font-size:13px; color:#8B95A1; font-weight:600;">{{ stock.market }} · {{ stock.ticker }}</div><div style="font-size:18px; font-weight:800; color:#191F28; margin-top:1px;">{{ stock.name }}</div></div>
+                </div>
+                <div style="margin-top:18px; font-size:32px; font-weight:800; color:#191F28; letter-spacing:-1px;">{{ stock.priceStr }}</div>
+                <div style="margin-top:6px;">{{ stock.changeEl }}</div>
+              </div>
+
+              <div style="margin:18px 22px 0; height:120px; position:relative;">{{ stock.chart }}</div>
+
+              <sc-if value="{{ stock.isHeld }}" hint-placeholder-val="{{ true }}">
+                <div style="margin:18px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                  <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:14px;">내 보유 현황</div>
+                  <div style="display:flex; flex-direction:column; gap:11px;">
+                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">보유 수량</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.qtyStr }}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">평균 단가</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.avgStr }}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">평가금액</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.evalStr }}</span></div>
+                    <div style="height:1px; background:#F2F4F6;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:14px; color:#6B7684;">평가손익</span>{{ stock.gainEl }}</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <div style="margin:16px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:14px;">종목 정보</div>
+                <div style="display:flex; flex-direction:column; gap:11px;">
+                  <sc-for list="{{ stock.stats }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">{{ r.label }}</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ r.value }}</span></div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:16px; padding-top:16px; border-top:1px solid #F2F4F6; font-size:13.5px; color:#6B7684; line-height:1.6; letter-spacing:-0.2px;">{{ stock.about }}</div>
+              </div>
+
+              <div style="margin:16px 20px 0;" onClick="{{ stock.openReport }}">
+                <div style="background:#fff; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                  <div style="width:38px; height:38px; flex:none; border-radius:11px; background:#F1ECFF; display:flex; align-items:center; justify-content:center; font-size:18px;">📄</div>
+                  <div style="flex:1;"><div style="font-size:14px; font-weight:700; color:#191F28;">이 종목 AI 리포트</div><div style="font-size:12px; color:#8B95A1; margin-top:1px;">{{ stock.reportTeaser }}</div></div>
+                  <div style="color:#C4CCD4; font-size:18px;">›</div>
+                </div>
+              </div>
+
+              <sc-if value="{{ stock.hasEvent }}" hint-placeholder-val="{{ false }}">
+                <div style="margin:12px 20px 0; background:#fff; border-radius:16px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; align-items:center; gap:12px;">
+                  <div style="width:38px; height:38px; flex:none; border-radius:11px; background:#E6F7F0; display:flex; align-items:center; justify-content:center; font-size:18px;">📅</div>
+                  <div style="flex:1;"><div style="font-size:14px; font-weight:700; color:#191F28;">예정된 일정</div><div style="font-size:12px; color:#8B95A1; margin-top:1px;">{{ stock.eventText }}</div></div>
+                </div>
+              </sc-if>
+
+              <div style="margin:16px 20px 0;" onClick="{{ goAI }}">
+                <div style="background:#F1ECFF; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:12px; cursor:pointer;">
+                  <div style="font-size:20px;">🤖</div>
+                  <div style="flex:1; font-size:14px; font-weight:700; color:#7C3AED; letter-spacing:-0.2px;">이 종목이 내 포트폴리오에 미치는 영향 보기</div>
+                  <div style="color:#7C3AED; font-size:18px;">›</div>
+                </div>
+              </div>
+
+              <div style="position:absolute; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #F2F4F6; padding:14px 20px 26px; display:flex; gap:10px;">
+                <div onClick="{{ stock.toggleWatch }}" style="flex:none; width:54px; height:52px; border-radius:14px; background:#F2F4F6; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ stock.starElBig }}</div>
+                <div style="flex:1; height:52px; border-radius:14px; background:#3182F6; color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;">매수하기</div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== AI ===== -->
+          <sc-if value="{{ isAI }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding-bottom:24px;">
+              <div style="display:flex; align-items:center; gap:10px; padding:6px 18px 10px;">
+                <div onClick="{{ back }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28;">‹</div>
+                <div style="font-size:16px; font-weight:800; color:#191F28;">AI 포트폴리오 비서</div>
+              </div>
+
+              <div style="margin:6px 20px 0; background:#fff; border-radius:20px; padding:22px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; align-items:center; gap:20px;">
+                <div style="position:relative; width:96px; height:96px; flex:none;">{{ scoreRing }}
+                  <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;"><div style="font-size:30px; font-weight:800; color:#191F28; line-height:1;">74</div><div style="font-size:11px; color:#8B95A1; margin-top:1px;">/ 100</div></div>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; color:#8B95A1; font-weight:600;">포트폴리오 건강 점수</div>
+                  <div style="font-size:19px; font-weight:800; color:#191F28; margin-top:3px;">대체로 양호하지만<br>분산이 필요해요</div>
+                </div>
+              </div>
+
+              <div style="margin:14px 20px 0; background:#fff; border-radius:20px; padding:20px 22px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:16px;">섹터 비중</div>
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                  <sc-for list="{{ sectors }}" as="s" hint-placeholder-count="4">
+                    <div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:7px;"><span style="font-size:13.5px; font-weight:600; color:#4E5968;">{{ s.name }}</span><span style="font-size:13.5px; font-weight:700; color:#191F28;">{{ s.pctStr }}</span></div>
+                      <div style="height:8px; background:#F2F4F6; border-radius:999px; overflow:hidden;">{{ s.bar }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="margin:14px 20px 0; display:flex; flex-direction:column; gap:10px;">
+                <sc-for list="{{ insights }}" as="ins" hint-placeholder-count="3">
+                  <div style="background:#fff; border-radius:18px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; gap:13px; align-items:flex-start;">
+                    <div style="width:36px; height:36px; flex:none; border-radius:11px; background:{{ ins.bg }}; display:flex; align-items:center; justify-content:center; font-size:17px;">{{ ins.icon }}</div>
+                    <div style="flex:1;"><div style="font-size:14.5px; font-weight:800; color:#191F28;">{{ ins.title }}</div><div style="font-size:13px; color:#6B7684; line-height:1.55; margin-top:3px; letter-spacing:-0.2px;">{{ ins.body }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div onClick="{{ goReports }}" style="margin:14px 20px 0; background:#191F28; border-radius:18px; padding:18px 20px; display:flex; align-items:center; gap:12px; cursor:pointer;">
+                <div style="width:40px; height:40px; flex:none; border-radius:12px; background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; font-size:19px;">📄</div>
+                <div style="flex:1;"><div style="font-size:14.5px; font-weight:800; color:#fff;">AI 리포트로 더 자세히</div><div style="font-size:12.5px; color:rgba(255,255,255,.7); margin-top:2px;">일간·주간 리포트와 종목별 분석을 받아보세요</div></div>
+                <div style="color:rgba(255,255,255,.6); font-size:18px;">›</div>
+              </div>
+
+              <div style="margin:24px 20px 0; padding-top:20px; border-top:1px solid #E5E8EB;">
+                <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:14px;">비서에게 더 물어보기</div>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                  <div style="display:flex; gap:8px; align-items:flex-start;">
+                    <div style="width:30px; height:30px; flex:none; border-radius:10px; background:#3182F6; display:flex; align-items:center; justify-content:center; font-size:15px;">🤖</div>
+                    <div style="background:#fff; border-radius:4px 16px 16px 16px; padding:13px 15px; font-size:14px; color:#191F28; line-height:1.55; box-shadow:0 1px 4px rgba(0,0,0,.05); max-width:80%; letter-spacing:-0.2px;">분석을 바탕으로 궁금한 점을 물어보세요. 아래 추천 질문을 눌러도 좋아요.</div>
+                  </div>
+                  <sc-for list="{{ messages }}" as="m" hint-placeholder-count="0">
+                    <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex; justify-content:flex-end; animation:bubble .25s ease;">
+                        <div style="background:#3182F6; color:#fff; border-radius:16px 4px 16px 16px; padding:12px 15px; font-size:14px; line-height:1.5; max-width:80%; letter-spacing:-0.2px;">{{ m.text }}</div>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ m.isAi }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex; gap:8px; align-items:flex-start; animation:bubble .25s ease;">
+                        <div style="width:30px; height:30px; flex:none; border-radius:10px; background:#3182F6; display:flex; align-items:center; justify-content:center; font-size:15px;">🤖</div>
+                        <div style="background:#fff; border-radius:4px 16px 16px 16px; padding:13px 15px; font-size:14px; color:#191F28; line-height:1.6; box-shadow:0 1px 4px rgba(0,0,0,.05); max-width:82%; letter-spacing:-0.2px;">{{ m.text }}</div>
+                      </div>
+                    </sc-if>
+                  </sc-for>
+                </div>
+
+                <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:8px;">
+                  <sc-for list="{{ suggestions }}" as="q" hint-placeholder-count="3">
+                    <div onClick="{{ q.ask }}" style="background:#EAF2FE; color:#3182F6; font-size:13px; font-weight:600; padding:9px 14px; border-radius:999px; cursor:pointer; letter-spacing:-0.2px;">{{ q.text }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== WATCH ===== -->
+          <sc-if value="{{ isWatch }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:8px 0 28px;">
+              <div style="padding:6px 20px 0; display:flex; align-items:flex-end; justify-content:space-between;">
+                <div><div style="font-size:22px; font-weight:800; color:#191F28; letter-spacing:-0.5px;">관심종목</div><div style="font-size:13px; color:#8B95A1; margin-top:2px;">{{ watchCount }}개 종목을 지켜보고 있어요</div></div>
+                <div onClick="{{ goExplore }}" style="font-size:13px; font-weight:700; color:#3182F6; cursor:pointer;">+ 추가</div>
+              </div>
+              <div style="margin:18px 12px 0; background:#fff; border-radius:18px; padding:6px 8px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <sc-for list="{{ watchItems }}" as="w" hint-placeholder-count="3">
+                  <div style="display:flex; align-items:center; gap:14px; padding:14px 12px;">
+                    <div onClick="{{ w.open }}" style="display:flex; align-items:center; gap:14px; flex:1; min-width:0; cursor:pointer;">
+                      <div style="width:42px; height:42px; flex:none; border-radius:13px; background:{{ w.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; font-weight:800;">{{ w.logoText }}</div>
+                      <div style="flex:1; min-width:0;"><div style="font-size:15px; font-weight:700; color:#191F28;">{{ w.name }}</div><div style="font-size:12.5px; color:#8B95A1; margin-top:2px;">{{ w.sub }}</div></div>
+                      <div style="text-align:right;"><div style="font-size:15px; font-weight:700; color:#191F28;">{{ w.priceStr }}</div><div style="margin-top:2px;">{{ w.changeEl }}</div></div>
+                    </div>
+                    <div onClick="{{ w.toggle }}" style="width:30px; height:30px; flex:none; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ w.starEl }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ watchEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:48px 20px; text-align:center;"><div style="font-size:32px;">⭐</div><div style="font-size:15px; font-weight:700; color:#4E5968; margin-top:12px;">관심종목이 비어 있어요</div><div onClick="{{ goExplore }}" style="font-size:13px; color:#3182F6; font-weight:700; margin-top:6px; cursor:pointer;">탐색에서 종목 추가하기</div></div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== SETTINGS ===== -->
+          <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:8px 0 40px;">
+              <div style="padding:6px 20px 0;"><div style="font-size:22px; font-weight:800; color:#191F28; letter-spacing:-0.5px;">전체</div></div>
+
+              <div style="margin:18px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; align-items:center; gap:14px;">
+                <div style="width:48px; height:48px; border-radius:50%; background:#EAF2FE; display:flex; align-items:center; justify-content:center; font-size:20px;">🙂</div>
+                <div style="flex:1;"><div style="font-size:16px; font-weight:800; color:#191F28;">내 계좌</div><div style="font-size:13px; color:#8B95A1; margin-top:1px;">토스증권 · 연동됨</div></div>
+                <div style="font-size:12px; font-weight:700; color:#12B886; background:#E6F7F0; padding:5px 10px; border-radius:8px;">연동중</div>
+              </div>
+
+              <div style="padding:24px 24px 10px; font-size:13px; font-weight:700; color:#8B95A1;">알림</div>
+              <div style="margin:0 20px; background:#fff; border-radius:18px; padding:4px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0;">
+                  <div><div style="font-size:15px; font-weight:700; color:#191F28;">푸시 알림</div><div style="font-size:12.5px; color:#8B95A1; margin-top:2px;">디스코드로 알림을 받아요</div></div>
+                  <div onClick="{{ togglePush }}">{{ pushToggle }}</div>
+                </div>
+                <div style="height:1px; background:#F2F4F6;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 0; opacity:{{ subOpacity }};">
+                  <div style="font-size:14.5px; color:#191F28;">가격 급변 알림</div>
+                  <div onClick="{{ toggleAlertPrice }}">{{ priceToggle }}</div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 0; opacity:{{ subOpacity }};">
+                  <div style="font-size:14.5px; color:#191F28;">AI 인사이트</div>
+                  <div onClick="{{ toggleAlertAI }}">{{ aiToggle }}</div>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 0; opacity:{{ subOpacity }};">
+                  <div style="font-size:14.5px; color:#191F28;">목표가 도달</div>
+                  <div onClick="{{ toggleAlertTarget }}">{{ targetToggle }}</div>
+                </div>
+              </div>
+
+              <div style="padding:24px 24px 10px; font-size:13px; font-weight:700; color:#8B95A1;">방해 금지</div>
+              <div style="margin:0 20px; background:#fff; border-radius:18px; padding:4px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0;">
+                  <div><div style="font-size:15px; font-weight:700; color:#191F28;">방해 금지 시간</div><div style="font-size:12.5px; color:#8B95A1; margin-top:2px;">이 시간엔 알림을 잠시 꺼둬요</div></div>
+                  <div onClick="{{ toggleDnd }}">{{ dndToggle }}</div>
+                </div>
+                <sc-if value="{{ dndOn }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:1px; background:#F2F4F6;"></div>
+                  <div onClick="{{ cycleDnd }}" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; cursor:pointer;">
+                    <div style="font-size:14.5px; color:#191F28;">시간대</div>
+                    <div style="display:flex; align-items:center; gap:6px;"><span style="font-size:14.5px; font-weight:700; color:#3182F6;">{{ dndRange }}</span><span style="color:#C4CCD4; font-size:16px;">›</span></div>
+                  </div>
+                </sc-if>
+              </div>
+
+              <div style="padding:24px 24px 10px; font-size:13px; font-weight:700; color:#8B95A1;">연동 · 기타</div>
+              <div style="margin:0 20px; background:#fff; border-radius:18px; padding:4px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0;"><div style="font-size:14.5px; color:#191F28;">디스코드 알림 채널</div><div style="display:flex; align-items:center; gap:6px;"><span style="font-size:13px; color:#8B95A1;">#내-주식봇</span><span style="color:#C4CCD4; font-size:16px;">›</span></div></div>
+                <div style="height:1px; background:#F2F4F6;"></div>
+                <div onClick="{{ restartOnb }}" style="display:flex; align-items:center; justify-content:space-between; padding:16px 0; cursor:pointer;"><div style="font-size:14.5px; color:#191F28;">계좌 다시 연동</div><span style="color:#C4CCD4; font-size:16px;">›</span></div>
+                <div style="height:1px; background:#F2F4F6;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 0;"><div style="font-size:14.5px; color:#191F28;">버전 정보</div><span style="font-size:13px; color:#8B95A1;">1.0.0</span></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== REPORTS ===== -->
+          <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:0 0 28px;">
+              <div style="display:flex; align-items:center; gap:10px; padding:6px 18px 6px;">
+                <div onClick="{{ back }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28;">‹</div>
+                <div style="font-size:16px; font-weight:800; color:#191F28;">AI 리포트</div>
+              </div>
+
+              <div style="margin:8px 20px 0; background:#F2F4F6; border-radius:12px; padding:4px; display:flex;">
+                <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
+                  <div onClick="{{ t.click }}" style="flex:1; text-align:center; padding:9px 0; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; background:{{ t.bg }}; color:{{ t.color }};">{{ t.label }} 리포트</div>
+                </sc-for>
+              </div>
+
+              <div style="margin:16px 20px 0; background:#fff; border-radius:20px; padding:22px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div style="font-size:13px; color:#8B95A1; font-weight:600;">{{ pfDate }}</div>
+                  <div style="font-size:12px; font-weight:700; color:{{ pfSentColor }}; background:{{ pfSentBg }}; padding:4px 10px; border-radius:8px;">{{ pfSentLabel }}</div>
+                </div>
+                <div style="font-size:20px; font-weight:800; color:#191F28; margin-top:12px; line-height:1.35; letter-spacing:-0.4px;">{{ pfHead }}</div>
+                <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+                  <sc-for list="{{ pfPoints }}" as="p" hint-placeholder-count="3">
+                    <div style="display:flex; gap:9px; align-items:flex-start;"><div style="width:5px; height:5px; border-radius:50%; background:#3182F6; margin-top:7px; flex:none;"></div><div style="font-size:13.5px; color:#4E5968; line-height:1.5; letter-spacing:-0.2px;">{{ p.t }}</div></div>
+                  </sc-for>
+                </div>
+                <div style="margin-top:16px; padding:14px 16px; background:#F8F4FF; border-radius:14px;">
+                  <div style="font-size:12px; font-weight:700; color:#7C3AED; margin-bottom:5px;">🤖 AI 코멘트</div>
+                  <div style="font-size:13.5px; color:#4E5968; line-height:1.6; letter-spacing:-0.2px;">{{ pfComment }}</div>
+                </div>
+              </div>
+
+              <div style="padding:24px 20px 10px; font-size:15px; font-weight:800; color:#191F28;">종목별 리포트</div>
+              <div style="margin:0 12px; background:#fff; border-radius:18px; padding:4px 8px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <sc-for list="{{ reportList }}" as="r" hint-placeholder-count="6">
+                  <div onClick="{{ r.open }}" style="display:flex; align-items:center; gap:12px; padding:14px 12px; cursor:pointer;">
+                    <div style="width:42px; height:42px; flex:none; border-radius:13px; background:{{ r.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:16px; font-weight:800;">{{ r.logoText }}</div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="display:flex; align-items:center; gap:6px;"><span style="font-size:14.5px; font-weight:700; color:#191F28;">{{ r.name }}</span><span style="font-size:10px; font-weight:700; color:{{ r.sentColor }}; background:{{ r.sentBg }}; padding:2px 6px; border-radius:6px;">{{ r.sentLabel }}</span></div>
+                      <div style="font-size:12.5px; color:#8B95A1; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ r.headline }}</div>
+                    </div>
+                    <div style="color:#C4CCD4; font-size:18px;">›</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== STOCK REPORT ===== -->
+          <sc-if value="{{ isStockReport }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:0 0 28px;">
+              <div style="display:flex; align-items:center; gap:10px; padding:6px 18px 6px;">
+                <div onClick="{{ back }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28;">‹</div>
+                <div style="font-size:16px; font-weight:800; color:#191F28;">{{ srep.name }} 리포트</div>
+              </div>
+
+              <div style="margin:8px 20px 0; background:#F2F4F6; border-radius:12px; padding:4px; display:flex;">
+                <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
+                  <div onClick="{{ t.click }}" style="flex:1; text-align:center; padding:9px 0; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer; background:{{ t.bg }}; color:{{ t.color }};">{{ t.label }}</div>
+                </sc-for>
+              </div>
+
+              <div style="margin:16px 20px 0; background:#fff; border-radius:20px; padding:20px 22px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <div style="width:44px; height:44px; flex:none; border-radius:13px; background:{{ srep.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; font-weight:800;">{{ srep.logoText }}</div>
+                  <div style="flex:1;"><div style="font-size:13px; color:#8B95A1; font-weight:600;">{{ srep.market }} · {{ srep.ticker }}</div><div style="font-size:17px; font-weight:800; color:#191F28;">{{ srep.name }}</div></div>
+                  <div style="font-size:12px; font-weight:700; color:{{ srep.sentColor }}; background:{{ srep.sentBg }}; padding:5px 11px; border-radius:9px;">{{ srep.sentLabel }}</div>
+                </div>
+                <div style="margin-top:16px; display:flex; align-items:baseline; gap:10px;"><span style="font-size:24px; font-weight:800; color:#191F28; letter-spacing:-0.6px;">{{ srep.priceStr }}</span>{{ srep.changeEl }}</div>
+              </div>
+
+              <div style="margin:14px 20px 0; background:#fff; border-radius:18px; padding:20px 22px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="font-size:13px; color:#8B95A1; font-weight:700;">한 줄 요약</div>
+                <div style="font-size:18px; font-weight:800; color:#191F28; margin-top:6px; line-height:1.4; letter-spacing:-0.4px;">{{ srep.headline }}</div>
+                <div style="margin-top:20px; font-size:13px; color:#8B95A1; font-weight:700;">핵심 포인트</div>
+                <div style="margin-top:12px; display:flex; flex-direction:column; gap:11px;">
+                  <sc-for list="{{ srep.points }}" as="p" hint-placeholder-count="3">
+                    <div style="display:flex; gap:10px; align-items:flex-start;"><div style="width:18px; height:18px; flex:none; border-radius:6px; background:#EAF2FE; color:#3182F6; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px;">✓</div><div style="font-size:14px; color:#4E5968; line-height:1.5; letter-spacing:-0.2px;">{{ p.t }}</div></div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="margin:14px 20px 0; background:#F1ECFF; border-radius:18px; padding:18px 20px;">
+                <div style="font-size:13px; font-weight:800; color:#7C3AED; margin-bottom:8px; display:flex; align-items:center; gap:6px;"><span>🤖</span>AI 분석 코멘트</div>
+                <div style="font-size:14px; color:#4E5968; line-height:1.65; letter-spacing:-0.2px;">{{ srep.comment }}</div>
+              </div>
+
+              <div style="margin:14px 22px 0; font-size:11.5px; color:#B0B8C1; line-height:1.5;">본 리포트는 AI가 생성한 참고 자료이며 투자 권유가 아니에요. 투자 판단과 책임은 본인에게 있어요.</div>
+            </div>
+          </sc-if>
+
+          <!-- ===== CALENDAR ===== -->
+          <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+            <div style="animation:scrIn .3s ease; padding:0 0 28px;">
+              <div style="display:flex; align-items:center; gap:10px; padding:6px 18px 6px;">
+                <div onClick="{{ back }}" style="width:32px; height:32px; display:flex; align-items:center; cursor:pointer; font-size:26px; color:#191F28;">‹</div>
+                <div style="font-size:16px; font-weight:800; color:#191F28;">실적·배당 캘린더</div>
+              </div>
+
+              <div style="display:flex; align-items:center; justify-content:center; gap:28px; padding:8px 0 14px;">
+                <div onClick="{{ calPrev }}" style="font-size:24px; color:#8B95A1; cursor:pointer; padding:0 6px;">‹</div>
+                <div style="font-size:17px; font-weight:800; color:#191F28;">{{ calMonthLabel }}</div>
+                <div onClick="{{ calNext }}" style="font-size:24px; color:#8B95A1; cursor:pointer; padding:0 6px;">›</div>
+              </div>
+
+              <div style="margin:0 20px; background:#fff; border-radius:20px; padding:16px 14px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; margin-bottom:8px;">
+                  <sc-for list="{{ calWeekdays }}" as="wd" hint-placeholder-count="7">{{ wd.el }}</sc-for>
+                </div>
+                <sc-for list="{{ calWeeks }}" as="wk" hint-placeholder-count="6">
+                  <div style="display:flex; margin-bottom:2px;">
+                    <sc-for list="{{ wk.cells }}" as="c" hint-placeholder-count="7">{{ c }}</sc-for>
+                  </div>
+                </sc-for>
+                <div style="display:flex; gap:16px; justify-content:center; margin-top:12px; padding-top:12px; border-top:1px solid #F2F4F6;">
+                  <div style="display:flex; align-items:center; gap:5px;"><div style="width:7px; height:7px; border-radius:50%; background:#3182F6;"></div><span style="font-size:12px; color:#6B7684; font-weight:600;">실적발표</span></div>
+                  <div style="display:flex; align-items:center; gap:5px;"><div style="width:7px; height:7px; border-radius:50%; background:#12B886;"></div><span style="font-size:12px; color:#6B7684; font-weight:600;">배당</span></div>
+                </div>
+              </div>
+
+              <div style="margin-top:18px; padding:0 20px; display:flex; gap:8px;">
+                <sc-for list="{{ calChips }}" as="ch" hint-placeholder-count="3">
+                  <div onClick="{{ ch.click }}" style="padding:8px 16px; border-radius:999px; font-size:13px; font-weight:700; cursor:pointer; background:{{ ch.bg }}; color:{{ ch.color }}; box-shadow:0 1px 3px rgba(0,0,0,.04);">{{ ch.label }}</div>
+                </sc-for>
+              </div>
+
+              <div style="padding:22px 20px 10px; font-size:15px; font-weight:800; color:#191F28;">{{ calSelDateLabel }}</div>
+              <div style="margin:0 20px;">
+                <sc-for list="{{ calSelEvents }}" as="e" hint-placeholder-count="0">
+                  <div onClick="{{ e.open }}" style="background:#fff; border-radius:14px; padding:14px 16px; margin-bottom:8px; display:flex; align-items:center; gap:12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.04);">
+                    <div style="width:42px; height:42px; flex:none; border-radius:12px; background:{{ e.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:15px; font-weight:800;">{{ e.logoText }}</div>
+                    <div style="flex:1;"><div style="font-size:14.5px; font-weight:700; color:#191F28;">{{ e.name }}</div><div style="font-size:12px; color:#8B95A1; margin-top:1px;">{{ e.dateStr }}</div></div>
+                    <div style="font-size:12px; font-weight:700; color:{{ e.color }}; background:{{ e.bg }}; padding:5px 11px; border-radius:9px;">{{ e.kind }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ calSelEmpty }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#fff; border-radius:14px; padding:22px; text-align:center; font-size:13.5px; color:#8B95A1; box-shadow:0 2px 8px rgba(0,0,0,.04);">이 날은 예정된 일정이 없어요</div>
+                </sc-if>
+              </div>
+
+              <div style="padding:24px 20px 10px; font-size:15px; font-weight:800; color:#191F28;">이번 달 전체 일정</div>
+              <div style="margin:0 12px; background:#fff; border-radius:18px; padding:4px 8px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <sc-for list="{{ calMonthEvents }}" as="e" hint-placeholder-count="6">
+                  <div onClick="{{ e.open }}" style="display:flex; align-items:center; gap:12px; padding:14px 10px; cursor:pointer;">
+                    <div style="width:46px; text-align:center; font-size:11px; color:#8B95A1; font-weight:700; flex:none;">{{ e.dateStr }}</div>
+                    <div style="width:36px; height:36px; flex:none; border-radius:11px; background:{{ e.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; font-weight:800;">{{ e.logoText }}</div>
+                    <div style="flex:1; min-width:0;"><div style="font-size:14px; font-weight:700; color:#191F28;">{{ e.name }}</div></div>
+                    <div style="font-size:11.5px; font-weight:700; color:{{ e.color }}; background:{{ e.bg }}; padding:4px 9px; border-radius:8px;">{{ e.kind }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- ===== FAB: AI chatbot ===== -->
+          <sc-if value="{{ showFab }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ goAI }}" style="position:absolute; bottom:96px; right:18px; height:52px; border-radius:26px; background:#3182F6; box-shadow:0 10px 24px rgba(49,130,246,.42); display:flex; align-items:center; gap:8px; padding:0 18px 0 16px; cursor:pointer; z-index:20;">
+              <span style="font-size:20px;">🤖</span><span style="font-size:14px; font-weight:700; color:#fff; letter-spacing:-0.3px;">AI 비서</span>
+            </div>
+          </sc-if>
+
+        </div>
+
+        <!-- ===== TAB BAR ===== -->
+        <sc-if value="{{ showTab }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:none; background:#fff; border-top:1px solid #F2F4F6; padding:8px 0 26px; display:flex;">
+            <div onClick="{{ goHome }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;">
+              <div style="font-size:21px;">🏠</div><div style="font-size:11px; font-weight:700; color:{{ homeTabColor }};">홈</div>
+            </div>
+            <div onClick="{{ goExplore }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;">
+              <div style="font-size:21px;">🔍</div><div style="font-size:11px; font-weight:700; color:{{ exploreTabColor }};">탐색</div>
+            </div>
+            <div onClick="{{ goWatch }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;">
+              <div style="font-size:21px;">⭐</div><div style="font-size:11px; font-weight:700; color:{{ watchTabColor }};">관심</div>
+            </div>
+            <div onClick="{{ goSettings }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;">
+              <div style="font-size:21px;">☰</div><div style="font-size:11px; font-weight:700; color:{{ settingsTabColor }};">전체</div>
+            </div>
+          </div>
+        </sc-if>
+
+      </sc-if>
+
+      <div style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:rgba(0,0,0,.22); z-index:30;"></div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:960}}">
+class Component extends DCLogic {
+  state = {
+    screen: 'onboard',
+    onb: 0,
+    pairKey: '',
+    pairStatus: '',
+    appKey: '',
+    secretKey: '',
+    showSecret: false,
+    stack: [],
+    selectedId: null,
+    watch: ['247540', 'MSFT', '035420'],
+    query: '',
+    market: '전체',
+    pushOn: true,
+    alertPrice: true,
+    alertAI: true,
+    alertTarget: false,
+    dndOn: true,
+    dndIdx: 0,
+    messages: [],
+    reportPeriod: '일간',
+    reportStockId: null,
+    calY: 2026, calM: 5, calSel: 24, calFilter: '전체',
+  };
+
+  rate = 1380;
+
+  master() {
+    return [
+      { id:'005930', name:'삼성전자', ticker:'005930', market:'KOSPI', cur:'₩', price:71200, pct:1.2, abs:800, qty:30, avg:68500, sector:'반도체', logoBg:'#1428A0', logoText:'삼',
+        about:'글로벌 1위 메모리 반도체 기업으로 스마트폰·디스플레이·파운드리까지 폭넓은 사업을 영위해요. HBM 등 AI 메모리 수요가 실적의 핵심 변수예요.', per:'13.2', cap:'425.0조', w52:'64,500 ~ 88,800', div:'1.9%' },
+      { id:'NVDA', name:'엔비디아', ticker:'NVDA', market:'NASDAQ', cur:'$', price:131.40, pct:3.1, abs:3.95, qty:12, avg:98.20, sector:'반도체', logoBg:'#76B900', logoText:'N',
+        about:'AI 가속기(GPU) 시장을 사실상 독점하는 반도체 기업이에요. 데이터센터 매출이 폭발적으로 성장하고 있어요.', per:'62.4', cap:'$3.2T', w52:'$66.3 ~ $140.8', div:'0.03%' },
+      { id:'TSLA', name:'테슬라', ticker:'TSLA', market:'NASDAQ', cur:'$', price:248.50, pct:-1.4, abs:-3.55, qty:6, avg:265.00, sector:'자동차', logoBg:'#E82127', logoText:'T',
+        about:'전기차 선두 기업이자 자율주행·로보택시·에너지 사업으로 확장 중이에요. 변동성이 큰 성장주예요.', per:'71.0', cap:'$0.79T', w52:'$138.8 ~ $271.0', div:'0%' },
+      { id:'196170', name:'알테오젠', ticker:'196170', market:'KOSDAQ', cur:'₩', price:312000, pct:4.2, abs:12600, qty:0, avg:0, sector:'바이오', logoBg:'#2B6CB0', logoText:'알',
+        about:'피하주사 변환 플랫폼(SC) 기술을 보유한 바이오 기업이에요. 글로벌 제약사와의 기술수출 계약이 주가의 핵심이에요.', per:'88.5', cap:'16.6조', w52:'78,200 ~ 345,000', div:'0%' },
+      { id:'247540', name:'에코프로비엠', ticker:'247540', market:'KOSDAQ', cur:'₩', price:96400, pct:-2.1, abs:-2100, qty:0, avg:0, sector:'2차전지', logoBg:'#00A06D', logoText:'에',
+        about:'2차전지 양극재 글로벌 선두 기업이에요. 전기차 수요와 리튬 가격에 실적이 민감하게 반응해요.', per:'41.2', cap:'9.4조', w52:'88,200 ~ 184,800', div:'0.2%' },
+      { id:'000660', name:'SK하이닉스', ticker:'000660', market:'KOSPI', cur:'₩', price:198500, pct:2.8, abs:5400, qty:8, avg:155000, sector:'반도체', logoBg:'#E60012', logoText:'SK',
+        about:'HBM(고대역폭 메모리) 시장을 주도하는 메모리 반도체 기업이에요. AI 가속기 수요 확대의 직접 수혜주로 꼽혀요.', per:'8.6', cap:'144.6조', w52:'112,000 ~ 248,500', div:'1.1%' },
+      { id:'AAPL', name:'애플', ticker:'AAPL', market:'NASDAQ', cur:'$', price:214.30, pct:0.6, abs:1.28, qty:10, avg:188.00, sector:'빅테크', logoBg:'#1D1D1F', logoText:'',
+        about:'아이폰을 중심으로 강력한 생태계를 구축한 빅테크예요. 서비스 매출 성장과 온디바이스 AI가 관전 포인트예요.', per:'33.1', cap:'$3.3T', w52:'$164.1 ~ $237.2', div:'0.4%' },
+      { id:'035720', name:'카카오', ticker:'035720', market:'KOSPI', cur:'₩', price:41250, pct:-0.9, abs:-350, qty:20, avg:52000, sector:'인터넷', logoBg:'#191919', logoText:'K',
+        about:'국내 1위 메신저를 기반으로 커머스·콘텐츠·핀테크 사업을 운영해요. 신사업 수익화와 규제가 주가의 주요 변수예요.', per:'34.5', cap:'18.2조', w52:'36,200 ~ 61,900', div:'0.3%' },
+      { id:'277810', name:'레인보우로보틱스', ticker:'277810', market:'KOSDAQ', cur:'₩', price:168000, pct:5.4, abs:8600, qty:0, avg:0, sector:'로봇', logoBg:'#6B46C1', logoText:'로',
+        about:'협동로봇·휴머노이드를 개발하는 로봇 기업이에요. 삼성전자의 지분 투자로 주목받고 있어요.', per:'—', cap:'5.1조', w52:'112,000 ~ 242,000', div:'0%' },
+      { id:'035420', name:'네이버', ticker:'035420', market:'KOSPI', cur:'₩', price:178500, pct:1.5, abs:2600, qty:0, avg:0, sector:'인터넷', logoBg:'#03C75A', logoText:'N',
+        about:'국내 1위 포털·커머스 기업으로 검색·쇼핑·웹툰·클라우드를 운영해요. AI 검색과 광고 회복이 관전 포인트예요.', per:'19.7', cap:'28.9조', w52:'151,000 ~ 233,500', div:'0.5%' },
+      { id:'PLTR', name:'팔란티어', ticker:'PLTR', market:'NASDAQ', cur:'$', price:42.60, pct:6.1, abs:2.45, qty:0, avg:0, sector:'소프트웨어', logoBg:'#101113', logoText:'P',
+        about:'정부·기업용 데이터 분석 플랫폼을 제공하는 소프트웨어 기업이에요. AIP 등 AI 제품 확장이 성장을 이끌어요.', per:'215.0', cap:'$96B', w52:'$20.3 ~ $44.4', div:'0%' },
+      { id:'005380', name:'현대차', ticker:'005380', market:'KOSPI', cur:'₩', price:244000, pct:0.4, abs:1000, qty:5, avg:230000, sector:'자동차', logoBg:'#002C5F', logoText:'H',
+        about:'국내 1위 완성차 기업으로 전기차·하이브리드 라인업을 확대 중이에요. 견조한 실적과 높은 배당이 강점이에요.', per:'4.9', cap:'51.4조', w52:'186,000 ~ 272,000', div:'5.2%' },
+      { id:'373220', name:'LG에너지솔루션', ticker:'373220', market:'KOSPI', cur:'₩', price:362000, pct:-1.1, abs:-4000, qty:0, avg:0, sector:'2차전지', logoBg:'#A50034', logoText:'L',
+        about:'글로벌 톱티어 전기차 배터리 제조사예요. 북미 증설과 전기차 수요 둔화 사이에서 실적이 움직여요.', per:'—', cap:'84.7조', w52:'292,000 ~ 462,000', div:'0.1%' },
+      { id:'META', name:'메타', ticker:'META', market:'NASDAQ', cur:'$', price:542.80, pct:2.2, abs:11.70, qty:0, avg:0, sector:'빅테크', logoBg:'#0866FF', logoText:'M',
+        about:'인스타그램·페이스북을 운영하는 소셜 빅테크예요. 광고 회복과 AI·메타버스 투자가 핵심 변수예요.', per:'27.4', cap:'$1.38T', w52:'$414.5 ~ $602.9', div:'0.4%' },
+      { id:'207940', name:'삼성바이오로직스', ticker:'207940', market:'KOSPI', cur:'₩', price:982000, pct:0.5, abs:5000, qty:0, avg:0, sector:'바이오', logoBg:'#1428A0', logoText:'바',
+        about:'세계 1위 바이오의약품 위탁생산(CDMO) 기업이에요. 대규모 증설로 수주 잔고가 꾸준히 늘고 있어요.', per:'62.0', cap:'69.9조', w52:'680,000 ~ 1,050,000', div:'0%' },
+      { id:'MSFT', name:'마이크로소프트', ticker:'MSFT', market:'NASDAQ', cur:'$', price:449.80, pct:0.9, abs:3.90, qty:0, avg:0, sector:'빅테크', logoBg:'#0078D4', logoText:'M',
+        about:'클라우드 Azure와 오피스, OpenAI 협업으로 AI 전환을 주도하는 빅테크예요. 안정적인 현금흐름이 강점이에요.', per:'36.1', cap:'$3.3T', w52:'$362.9 ~ $468.3', div:'0.7%' },
+      { id:'000270', name:'기아', ticker:'000270', market:'KOSPI', cur:'₩', price:98700, pct:0.7, abs:700, qty:0, avg:0, sector:'자동차', logoBg:'#05141F', logoText:'기',
+        about:'현대차그룹의 완성차 기업으로 높은 수익성과 배당이 강점이에요. 전기차·SUV 믹스 개선이 실적을 견인해요.', per:'4.2', cap:'39.0조', w52:'82,000 ~ 134,000', div:'5.8%' },
+      { id:'AMD', name:'AMD', ticker:'AMD', market:'NASDAQ', cur:'$', price:158.90, pct:2.7, abs:4.18, qty:0, avg:0, sector:'반도체', logoBg:'#ED1C24', logoText:'A',
+        about:'CPU·GPU를 만드는 반도체 기업으로 엔비디아의 주요 경쟁자예요. AI 가속기 MI 시리즈가 성장 동력이에요.', per:'46.5', cap:'$257B', w52:'$94.0 ~ $227.3', div:'0%' },
+      { id:'005490', name:'POSCO홀딩스', ticker:'005490', market:'KOSPI', cur:'₩', price:398500, pct:-2.3, abs:-9500, qty:0, avg:0, sector:'철강', logoBg:'#003478', logoText:'P',
+        about:'철강과 2차전지 소재 사업을 함께 영위하는 지주사예요. 리튬 등 소재 사업의 성과가 밸류에이션을 좌우해요.', per:'12.8', cap:'31.2조', w52:'330,000 ~ 545,000', div:'2.8%' },
+      { id:'105560', name:'KB금융', ticker:'105560', market:'KOSPI', cur:'₩', price:78400, pct:1.9, abs:1450, qty:0, avg:0, sector:'금융', logoBg:'#FFAA00', logoText:'KB',
+        about:'국내 최대 금융지주예요. 안정적인 이익과 적극적인 주주환원(배당·자사주)이 강점이에요.', per:'6.1', cap:'31.5조', w52:'52,000 ~ 89,200', div:'4.6%' },
+    ];
+  }
+
+  fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  money(cur, n) {
+    if (cur === '₩') return '₩' + this.fmt(n);
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  krw(s, val) { return s.cur === '₩' ? val : val * this.rate; }
+  num(t, up) { return React.createElement('span', { style: { color: up ? '#F04452' : '#3182F6', fontWeight: 700, fontSize: '14px' } }, t); }
+  bigNum(t, up) { return React.createElement('span', { style: { color: up ? '#F04452' : '#3182F6', fontWeight: 700, fontSize: '15px' } }, t); }
+  star(on, size) { return React.createElement('span', { style: { fontSize: (size || 20) + 'px', color: on ? '#FFB400' : '#C4CCD4', lineHeight: 1 } }, on ? '★' : '☆'); }
+  marketGroup(s) { return s.market === 'KOSPI' ? '코스피' : s.market === 'KOSDAQ' ? '코스닥' : '미국'; }
+
+  get(id) { return this.master().find(s => s.id === id); }
+  go(to) { this.setState({ screen: to, stack: [] }); }
+  push(to) { this.setState(s => ({ screen: to, stack: s.screen === to ? s.stack : s.stack.concat([s.screen]) })); }
+  nav(to) { this.push(to); }
+  openStock(id) { this.setState(s => ({ selectedId: id, screen: 'detail', stack: s.stack.concat([s.screen]) })); }
+  back() { this.setState(s => { const st = s.stack.slice(); const p = st.pop(); return { screen: p || 'home', stack: st }; }); }
+  goAI() { this.push('ai'); }
+  toggleWatch(id) {
+    const w = this.state.watch.slice();
+    const i = w.indexOf(id);
+    if (i >= 0) w.splice(i, 1); else w.push(id);
+    this.setState({ watch: w });
+  }
+
+  goReports() { this.nav('reports'); }
+  goCalendar() { this.nav('calendar'); }
+  openStockReport(id) { this.setState(s => ({ reportStockId: id, screen: 'stockReport', stack: s.stack.concat([s.screen]) })); }
+  selectDay(d) { if (d) this.setState({ calSel: d }); }
+  calNav(delta) {
+    let mo = this.state.calM + delta, y = this.state.calY;
+    if (mo < 0) { mo = 11; y--; }
+    if (mo > 11) { mo = 0; y++; }
+    this.setState({ calM: mo, calY: y, calSel: 1 });
+  }
+
+  senti(s) {
+    return s === '긍정' ? { color: '#12B886', bg: '#E6F7F0' } : s === '부정' ? { color: '#F04452', bg: '#FFEAEC' } : { color: '#8B95A1', bg: '#F2F4F6' };
+  }
+
+  calEvents() {
+    return [
+      { y:2026, mo:5, day:5,  type:'div',  kind:'배당락',   stockId:'105560' },
+      { y:2026, mo:5, day:10, type:'earn', kind:'실적발표', stockId:'AAPL' },
+      { y:2026, mo:5, day:12, type:'earn', kind:'실적발표', stockId:'005930' },
+      { y:2026, mo:5, day:12, type:'div',  kind:'배당락',   stockId:'005380' },
+      { y:2026, mo:5, day:18, type:'earn', kind:'실적발표', stockId:'NVDA' },
+      { y:2026, mo:5, day:24, type:'div',  kind:'배당지급', stockId:'AAPL' },
+      { y:2026, mo:5, day:26, type:'div',  kind:'배당락',   stockId:'035720' },
+      { y:2026, mo:5, day:30, type:'earn', kind:'실적발표', stockId:'TSLA' },
+    ];
+  }
+
+  reportData() {
+    return {
+      '005930': { d:{s:'긍정',h:'HBM 수요 기대에 강세',p:['외국인 5거래일 연속 순매수','HBM3E 양산 임박 보도','반도체 업종 동반 상승'],c:'AI 메모리 수요 회복 기대가 주가를 끌어올렸어요. 파운드리 수익성 회복 속도가 추가 상승의 관건이에요.'},
+                  w:{s:'긍정',h:'주간 +4.2%, 반도체 반등 주도',p:['주간 외국인 순매수 1.2조','목표가 상향 리포트 다수','메모리 현물가 반등'],c:'이번 주 반도체 업황 회복 기대가 본격화됐어요. 보유 비중이 큰 만큼 수익률에 크게 기여했어요.'} },
+      '000660': { d:{s:'긍정',h:'HBM 수혜 기대 지속',p:['+2.8% 상승, 거래량 증가','HBM4 공급 협상 보도','외국인 매수 우위'],c:'HBM 시장 주도력이 부각되며 강세를 보였어요. 이미 +28% 수익 구간이라 일부 차익 실현도 고려할 만해요.'},
+                  w:{s:'긍정',h:'주간 +6.2%, 보유 중 최고 수익',p:['주간 기관·외국인 동반 순매수','HBM 단가 인상 기대','반도체 ETF 자금 유입'],c:'포트폴리오에서 가장 높은 주간 수익률을 기록했어요. 비중 관리 차원의 부분 익절을 검토해 보세요.'} },
+      'NVDA':   { d:{s:'긍정',h:'AI 수요 기대에 +3.1%',p:['데이터센터 매출 기대 지속','목표가 상향 의견','기술주 동반 강세'],c:'AI 가속기 수요 기대가 여전히 주가를 지지해요. 단일 종목 비중이 17%로 높아 변동성에 유의하세요.'},
+                  w:{s:'중립',h:'주간 보합, 실적 발표 대기',p:['6/18 실적 발표 예정','옵션 변동성 확대','차익 매물과 매수세 공방'],c:'실적 발표를 앞두고 관망세가 짙어요. 비중이 큰 만큼 실적 전후 변동성에 대비하세요.'} },
+      'AAPL':   { d:{s:'중립',h:'배당 입금, 완만한 강세',p:['오늘 분기 배당 지급','서비스 매출 기대 유지','+0.6% 소폭 상승'],c:'안정적인 흐름이에요. 오늘 배당이 입금됐고, 온디바이스 AI 기대가 하방을 지지해요.'},
+                  w:{s:'중립',h:'주간 +1.1%, 박스권',p:['뚜렷한 모멘텀 부재','달러 강세 영향 제한적','방어주 성격 부각'],c:'변동성이 낮아 포트폴리오의 안정판 역할을 했어요. 환율 노출이 큰 점은 참고하세요.'} },
+      'TSLA':   { d:{s:'부정',h:'차익 매물에 -1.4%',p:['인도량 둔화 우려','-1.4% 하락 마감','성장주 변동성 확대'],c:'평균 단가 대비 손실 구간이에요. 변동성이 큰 종목인 만큼 분할 대응을 권해요.'},
+                  w:{s:'부정',h:'주간 -4.1%, 부진 지속',p:['수요 둔화 우려 부각','경쟁 심화 보도','기관 매도 우위'],c:'이번 주 포트폴리오 수익률을 끌어내린 종목이에요. 손절·물타기 기준을 미리 정해두세요.'} },
+      '035720': { d:{s:'부정',h:'약세 지속 -0.9%',p:['신사업 수익화 지연','규제 이슈 잔존','거래량 위축'],c:'보유 종목 중 손실 폭(-21%)이 가장 커요. 반등 모멘텀이 약해 비중 축소를 고려할 만해요.'},
+                  w:{s:'부정',h:'주간 -2.3%, 모멘텀 부재',p:['뚜렷한 반등 재료 부족','외국인 매도 지속','업종 내 상대 약세'],c:'회복이 더딘 구간이에요. 손실 관리 관점에서 대응 전략을 점검해 보세요.'} },
+      '005380': { d:{s:'중립',h:'배당락 앞두고 보합',p:['고배당 매력 부각','+0.4% 소폭 상승','환율 우호적'],c:'배당락(6/12)을 앞두고 안정적이에요. 5.2% 배당수익률이 하방을 지지해요.'},
+                  w:{s:'긍정',h:'주간 +1.8%, 배당 매력 부각',p:['배당 시즌 자금 유입','실적 견조','SUV 믹스 개선'],c:'배당 메리트로 견조한 흐름이에요. 포트폴리오의 배당 비중을 보강하는 역할을 해요.'} },
+    };
+  }
+
+  reportFor(stock, period) {
+    const map = this.reportData()[stock.id];
+    if (map) return period === '주간' ? map.w : map.d;
+    const up = stock.pct >= 0;
+    return {
+      s: up ? '긍정' : '부정',
+      h: up ? '상승 흐름, 매수세 유입' : '약세, 차익 매물 출회',
+      p: [(up ? '+' : '') + stock.pct.toFixed(1) + '% 변동', stock.sector + ' 업종 ' + (up ? '동반 강세' : '동반 약세'), '단기 모멘텀 ' + (up ? '우호적' : '중립적')],
+      c: stock.name + '은(는) ' + (period === '주간' ? '이번 주 ' : '오늘 ') + (up ? '상승했어요' : '하락했어요') + '. 관심종목으로 추이를 지켜보기 좋아요.',
+    };
+  }
+
+  submitPair() {
+    if (this.state.pairStatus === 'verifying' || this.state.pairStatus === 'ok') return;
+    if (this.state.pairKey.trim().length < 4) return;
+    this.setState({ pairStatus: 'verifying' });
+    setTimeout(() => {
+      if (this.state.pairStatus !== 'verifying') return;
+      // demo: keys starting with TOSS-AI pass, others fail
+      const valid = /toss-ai/i.test(this.state.pairKey.trim());
+      if (valid) {
+        this.setState({ pairStatus: 'ok' });
+        setTimeout(() => { if (this.state.onb === 1) this.setState({ onb: 2 }); }, 650);
+      } else {
+        this.setState({ pairStatus: 'error' });
+      }
+    }, 1400);
+  }
+
+  submitKeys() {
+    if (this.state.appKey.trim().length < 4 || this.state.secretKey.trim().length < 4) return;
+    this.setState({ onb: 3 });
+    setTimeout(() => { if (this.state.onb === 3) this.setState({ onb: 4 }); }, 2300);
+  }
+
+  responses(q) {
+    const map = {
+      '지금 리밸런싱 추천해줘': '반도체 비중을 46%에서 35% 수준으로 줄이는 걸 추천해요. 수익이 큰 SK하이닉스(+28%)를 일부 익절해 현금을 확보하고, 비어 있는 채권형·배당 ETF를 10%가량 편입하면 변동성이 눈에 띄게 낮아져요.',
+      '가장 위험한 종목은?': '비중과 변동성을 함께 보면 엔비디아예요. 단일 종목으로 약 17%를 차지하고 베타가 높아 시장 하락 시 낙폭이 클 수 있어요. 손실 폭만 보면 카카오가 -21%로 가장 부진해요.',
+      '환율 위험을 줄이려면?': '현재 달러 자산 비중이 56%로 높아요. 환헤지형 미국 ETF로 일부 교체하거나 국내 우량주를 늘려 원화 자산을 50% 이상으로 맞추면 환율 변동의 영향을 줄일 수 있어요.',
+      '배당 포트폴리오로 바꾸려면?': '현재 평균 배당수익률은 약 1.3%로 낮은 편이에요. 현대차(5.2%)나 기아(5.8%)처럼 고배당주 비중을 늘리고, 성장주 일부를 배당 ETF로 교체하면 분기 현금흐름을 만들 수 있어요.',
+    };
+    return map[q] || '말씀하신 내용을 지금 포트폴리오에 비춰 살펴봤어요. 핵심 리스크는 반도체·달러 집중도예요. 분산을 통해 안정성을 높이는 방향을 추천해요. 투자 판단의 최종 책임은 본인에게 있어요.';
+  }
+  ask(q) {
+    this.setState({ messages: this.state.messages.concat([{ role: 'user', text: q }, { role: 'ai', text: this.responses(q) }]) });
+  }
+
+  toggleEl(on) {
+    return React.createElement('div', { style: { width: '50px', height: '30px', borderRadius: '999px', background: on ? '#3182F6' : '#D1D6DB', position: 'relative', transition: 'background .2s', cursor: 'pointer' } },
+      React.createElement('div', { style: { position: 'absolute', top: '3px', left: on ? '23px' : '3px', width: '24px', height: '24px', borderRadius: '50%', background: '#fff', transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.2)' } }));
+  }
+
+  renderVals() {
+    const sc = this.state.screen;
+    const m = this.master();
+    const held = m.filter(s => s.qty > 0);
+    const wset = this.state.watch;
+
+    // totals
+    let val = 0, cost = 0;
+    held.forEach(s => { val += this.krw(s, s.price * s.qty); cost += this.krw(s, s.avg * s.qty); });
+    const gain = val - cost;
+    const gainPct = (gain / cost) * 100;
+    const totalUp = gain >= 0;
+    const totalGainStr = (totalUp ? '+' : '') + '₩' + this.fmt(Math.abs(gain)) + ' (' + (totalUp ? '+' : '-') + Math.abs(gainPct).toFixed(1) + '%)';
+
+    const holdings = held.map(s => {
+      const up = s.pct >= 0;
+      return Object.assign({}, s, {
+        _v: this.krw(s, s.price * s.qty),
+        sub: s.market + ' · ' + s.qty + '주',
+        valueStr: this.money(s.cur, s.price * s.qty),
+        changeEl: this.num((up ? '+' : '') + s.pct.toFixed(1) + '%', up),
+        open: () => this.openStock(s.id),
+      });
+    }).sort((a, b) => b._v - a._v);
+
+    // selected
+    let stock = null;
+    const sel = this.get(this.state.selectedId) || held[0];
+    if (sel) {
+      const up = sel.pct >= 0;
+      const inW = wset.includes(sel.id);
+      const g = (sel.price - sel.avg) * sel.qty;
+      const gp = sel.avg ? ((sel.price - sel.avg) / sel.avg) * 100 : 0;
+      const gup = g >= 0;
+      var selEv = this.calEvents().find(e => e.stockId === sel.id);
+      stock = {
+        name: sel.name, ticker: sel.ticker, market: sel.market, logoBg: sel.logoBg, logoText: sel.logoText || sel.name[0],
+        priceStr: this.money(sel.cur, sel.price), about: sel.about, isHeld: sel.qty > 0,
+        changeEl: this.bigNum((up ? '▲ ' : '▼ ') + Math.abs(sel.pct).toFixed(1) + '%   ' + (up ? '+' : '-') + this.money(sel.cur, Math.abs(sel.abs)), up),
+        qtyStr: sel.qty + '주', avgStr: this.money(sel.cur, sel.avg), evalStr: this.money(sel.cur, sel.price * sel.qty),
+        gainEl: React.createElement('span', { style: { color: gup ? '#F04452' : '#3182F6', fontWeight: 700, fontSize: '14px' } }, (gup ? '+' : '') + this.money(sel.cur, g) + ' (' + (gup ? '+' : '') + gp.toFixed(1) + '%)'),
+        stats: [
+          { label: '시가총액', value: sel.cap },
+          { label: 'PER', value: sel.per === '—' ? '—' : sel.per + '배' },
+          { label: '52주 최저~최고', value: sel.w52 },
+          { label: '배당수익률', value: sel.div },
+        ],
+        starEl: this.star(inW, 22), starElBig: this.star(inW, 22),
+        toggleWatch: () => this.toggleWatch(sel.id),
+        chart: this.makeChart(up),
+        openReport: () => this.openStockReport(sel.id),
+        reportTeaser: this.reportFor(sel, '일간').h,
+        hasEvent: !!selEv,
+        eventText: selEv ? (selEv.y + '년 ' + (selEv.mo + 1) + '월 ' + selEv.day + '일 · ' + selEv.kind) : '',
+      };
+    }
+
+    // sectors
+    const secMap = {};
+    held.forEach(s => { secMap[s.sector] = (secMap[s.sector] || 0) + this.krw(s, s.price * s.qty); });
+    const secColor = { '반도체': '#3182F6', '빅테크': '#845EF7', '자동차': '#12B886', '인터넷': '#FF922B', '2차전지': '#F783AC', '바이오': '#22B8CF', '금융': '#FAB005' };
+    const sectors = Object.keys(secMap).map(k => ({ name: k, raw: secMap[k] })).sort((a, b) => b.raw - a.raw).map(s => {
+      const pct = (s.raw / val) * 100;
+      return { name: s.name, pctStr: pct.toFixed(0) + '%', bar: React.createElement('div', { style: { height: '100%', width: pct.toFixed(1) + '%', background: secColor[s.name] || '#3182F6', borderRadius: '999px' } }) };
+    });
+
+    const score = 74;
+    const scoreRing = React.createElement('div', { style: { width: '96px', height: '96px', borderRadius: '50%', background: 'conic-gradient(#3182F6 ' + (score * 3.6) + 'deg, #E5E8EB 0)' } },
+      React.createElement('div', { style: { position: 'absolute', inset: '9px', borderRadius: '50%', background: '#fff' } }));
+
+    const insights = [
+      { icon: '⚠️', bg: '#FFF4E6', title: '반도체 집중도가 높아요', body: '전체의 약 46%가 반도체에 몰려 있어요. 업황이 둔화되면 변동성이 커질 수 있어요.' },
+      { icon: '💱', bg: '#EAF2FE', title: '달러 노출 56%', body: '미국 주식 비중이 절반을 넘어 원화 강세 시 환산 수익이 줄어들 수 있어요.' },
+      { icon: '✅', bg: '#E6F7F0', title: '수익 종목이 우위예요', body: '보유 7종목 중 5종목이 플러스예요. 손실은 카카오에 집중돼 있어요.' },
+    ];
+
+    const messages = this.state.messages.map(x => ({ text: x.text, isUser: x.role === 'user', isAi: x.role === 'ai' }));
+    const suggestions = ['지금 리밸런싱 추천해줘', '가장 위험한 종목은?', '환율 위험을 줄이려면?', '배당 포트폴리오로 바꾸려면?'].map(t => ({ text: t, ask: () => this.ask(t) }));
+
+    // watch
+    const watchItems = wset.map(id => this.get(id)).filter(Boolean).map(s => {
+      const up = s.pct >= 0;
+      return {
+        name: s.name, sub: s.market + ' · ' + s.sector, logoBg: s.logoBg, logoText: s.logoText || s.name[0],
+        priceStr: this.money(s.cur, s.price), changeEl: this.num((up ? '+' : '') + s.pct.toFixed(1) + '%', up),
+        starEl: this.star(true, 19), open: () => this.openStock(s.id), toggle: () => this.toggleWatch(s.id),
+      };
+    });
+
+    // explore
+    const q = this.state.query.trim().toLowerCase();
+    const mf = this.state.market;
+    const exploreItems = m.filter(s => {
+      const okM = mf === '전체' || this.marketGroup(s) === mf;
+      const okQ = !q || s.name.toLowerCase().includes(q) || s.ticker.toLowerCase().includes(q);
+      return okM && okQ;
+    }).map(s => {
+      const up = s.pct >= 0;
+      const inW = wset.includes(s.id);
+      return {
+        name: s.name, sub: s.market + ' · ' + s.sector, logoBg: s.logoBg, logoText: s.logoText || s.name[0],
+        priceStr: this.money(s.cur, s.price), changeEl: this.num((up ? '+' : '') + s.pct.toFixed(1) + '%', up),
+        heldTag: s.qty > 0 ? React.createElement('span', { style: { fontSize: '10px', fontWeight: 700, color: '#3182F6', background: '#EAF2FE', padding: '2px 6px', borderRadius: '6px' } }, '보유중') : null,
+        starEl: this.star(inW, 20), open: () => this.openStock(s.id), toggle: () => this.toggleWatch(s.id),
+      };
+    });
+    const chips = ['전체', '코스피', '코스닥', '미국'].map(label => ({
+      label, click: () => this.setState({ market: label }),
+      bg: mf === label ? '#3182F6' : '#fff', color: mf === label ? '#fff' : '#6B7684',
+    }));
+
+    const dndRanges = ['오후 11:00 ~ 오전 7:00', '오후 10:00 ~ 오전 8:00', '오전 12:00 ~ 오전 6:00'];
+    // ===== Reports =====
+    const period = this.state.reportPeriod;
+    const periodTabs = ['일간', '주간'].map(label => ({ label, bg: period === label ? '#191F28' : '#fff', color: period === label ? '#fff' : '#8B95A1', click: () => this.setState({ reportPeriod: label }) }));
+    const pfReports = {
+      '일간': { date: '2026년 6월 24일 (수)', s: '긍정', head: '반도체 강세에 평가액 +1.2%', points: ['엔비디아 +3.1%·SK하이닉스 +2.8%로 반도체가 상승 견인', '카카오 -0.9%로 인터넷 업종 약세', '오늘 애플 분기 배당이 입금됐어요'], comment: '오늘 포트폴리오는 반도체 강세 덕에 올랐어요. 다만 반도체 집중도가 높아 변동성에 유의하세요. 환율은 전일과 비슷한 수준이에요.' },
+      '주간': { date: '6월 3주차 · 6/15 ~ 6/21', s: '긍정', head: '주간 +3.4%, 반도체가 수익 주도', points: ['SK하이닉스 주간 +6.2%로 최고 수익률', '테슬라 -4.1%로 부진', '달러 약세로 환차손 일부 발생'], comment: '이번 주는 AI 반도체 반등이 수익을 이끌었어요. 다음 주 엔비디아 실적 발표가 예정돼 있어 변동성에 대비하세요.' },
+    };
+    const pfr = pfReports[period];
+    const pfSt = this.senti(pfr.s);
+    const repStocks = [];
+    held.forEach(s => repStocks.push(s));
+    wset.forEach(id => { const s = this.get(id); if (s && !repStocks.find(x => x.id === id)) repStocks.push(s); });
+    const repList = repStocks.map(s => {
+      const r = this.reportFor(s, period); const st = this.senti(r.s); const up = s.pct >= 0;
+      return { name: s.name, logoBg: s.logoBg, logoText: s.logoText || s.name[0], headline: r.h, sentLabel: r.s, sentColor: st.color, sentBg: st.bg, changeEl: this.num((up ? '+' : '') + s.pct.toFixed(1) + '%', up), open: () => this.openStockReport(s.id) };
+    });
+    let srep = null;
+    const srStock = this.get(this.state.reportStockId) || sel;
+    if (srStock) {
+      const r = this.reportFor(srStock, period); const st = this.senti(r.s); const up = srStock.pct >= 0;
+      srep = { name: srStock.name, ticker: srStock.ticker, market: srStock.market, logoBg: srStock.logoBg, logoText: srStock.logoText || srStock.name[0],
+        priceStr: this.money(srStock.cur, srStock.price), changeEl: this.bigNum((up ? '+' : '') + srStock.pct.toFixed(1) + '%', up),
+        sentLabel: r.s, sentColor: st.color, sentBg: st.bg, headline: r.h, points: r.p.map(t => ({ t })), comment: r.c };
+    }
+
+    // ===== Calendar =====
+    const calY = this.state.calY, calM = this.state.calM, calSel = this.state.calSel;
+    const first = new Date(calY, calM, 1).getDay();
+    const dim = new Date(calY, calM + 1, 0).getDate();
+    const cf = this.state.calFilter;
+    const evColor = t => t === 'earn' ? '#3182F6' : '#12B886';
+    const evShown = this.calEvents().filter(e => e.y === calY && e.mo === calM && (cf === '전체' || (cf === '실적' && e.type === 'earn') || (cf === '배당' && e.type === 'div')));
+    const cells = [];
+    for (let i = 0; i < first; i++) cells.push(null);
+    for (let d = 1; d <= dim; d++) cells.push(d);
+    while (cells.length % 7 !== 0) cells.push(null);
+    const calWeeks = [];
+    for (let i = 0; i < cells.length; i += 7) {
+      const row = cells.slice(i, i + 7).map((d, ci) => {
+        const dayEv = d ? evShown.filter(e => e.day === d) : [];
+        const today = d === 24, seld = d === calSel;
+        const numEl = React.createElement('div', { key: 'n', style: { width: '30px', height: '30px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: (today || seld) ? 700 : 500, color: today ? '#fff' : seld ? '#3182F6' : (d ? '#333D4B' : 'transparent'), background: today ? '#3182F6' : seld ? '#EAF2FE' : 'transparent' } }, d ? String(d) : '');
+        const dotsEl = React.createElement('div', { key: 'o', style: { display: 'flex', gap: '3px', height: '6px', marginTop: '2px' } }, dayEv.slice(0, 3).map((e, j) => React.createElement('div', { key: j, style: { width: '5px', height: '5px', borderRadius: '50%', background: evColor(e.type) } })));
+        return React.createElement('div', { key: ci, onClick: () => this.selectDay(d), style: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2px 0', cursor: d ? 'pointer' : 'default' } }, [numEl, dotsEl]);
+      });
+      calWeeks.push({ cells: row });
+    }
+    const wdColors = ['#F04452', '#8B95A1', '#8B95A1', '#8B95A1', '#8B95A1', '#8B95A1', '#3182F6'];
+    const calWeekdays = ['일', '월', '화', '수', '목', '금', '토'].map((l, i) => ({ el: React.createElement('div', { style: { flex: 1, textAlign: 'center', fontSize: '12px', fontWeight: 600, color: wdColors[i] } }, l) }));
+    const fmtEv = e => { const s = this.get(e.stockId); return { dateStr: (e.mo + 1) + '월 ' + e.day + '일', kind: e.kind, color: evColor(e.type), bg: e.type === 'earn' ? '#EAF2FE' : '#E6F7F0', name: s ? s.name : '', logoBg: s ? s.logoBg : '#ccc', logoText: s ? (s.logoText || s.name[0]) : '', open: () => { if (s) this.openStock(s.id); } }; };
+    const calSelEvents = evShown.filter(e => e.day === calSel).map(fmtEv);
+    const calMonthEvents = evShown.slice().sort((a, b) => a.day - b.day).map(fmtEv);
+    const selDow = ['일', '월', '화', '수', '목', '금', '토'][new Date(calY, calM, calSel).getDay()];
+
+    const blue = '#3182F6', gray = '#B0B8C1';
+
+    return {
+      isReports: sc === 'reports', isStockReport: sc === 'stockReport', isCalendar: sc === 'calendar',
+      goReports: () => this.goReports(), goCalendar: () => this.goCalendar(),
+      periodTabs,
+      pfDate: pfr.date, pfSentLabel: pfr.s, pfSentColor: pfSt.color, pfSentBg: pfSt.bg, pfHead: pfr.head, pfPoints: pfr.points.map(t => ({ t })), pfComment: pfr.comment,
+      reportList: repList, srep,
+      calMonthLabel: calY + '년 ' + (calM + 1) + '월', calPrev: () => this.calNav(-1), calNext: () => this.calNav(1),
+      calWeeks, calWeekdays, calChips: ['전체', '실적', '배당'].map(label => ({ label, click: () => this.setState({ calFilter: label }), bg: cf === label ? '#3182F6' : '#fff', color: cf === label ? '#fff' : '#6B7684' })),
+      calSelDateLabel: (calM + 1) + '월 ' + calSel + '일 (' + selDow + ')', calSelEvents, calSelEmpty: calSelEvents.length === 0, calMonthEvents,
+      isOnboard: sc === 'onboard', inApp: sc !== 'onboard',
+      onb0: this.state.onb === 0, onb1: this.state.onb === 1, onb2: this.state.onb === 2, onb3: this.state.onb === 3, onb4: this.state.onb === 4,
+      onbToPairing: () => this.setState({ onb: 1 }),
+      onbBackToIntro: () => this.setState({ onb: 0 }),
+      onbBackToPairing: () => this.setState({ onb: 1, pairStatus: 'ok' }),
+      submitKeys: () => this.submitKeys(),
+      onbFinish: () => this.setState({ screen: 'home' }),
+      restartOnb: () => this.setState({ screen: 'onboard', onb: 0, pairKey: '', pairStatus: '', appKey: '', secretKey: '' }),
+
+      // pairing (step 1)
+      pairKey: this.state.pairKey,
+      onPairKey: (e) => this.setState({ pairKey: e.target.value, pairStatus: '' }),
+      pairOk: this.state.pairStatus === 'ok',
+      pairVerifying: this.state.pairStatus === 'verifying',
+      pairError: this.state.pairStatus === 'error',
+      pairBorder: this.state.pairStatus === 'error' ? '#F04452' : (this.state.pairStatus === 'ok' || this.state.pairKey.trim().length >= 4) ? '#3182F6' : '#E5E8EB',
+      submitPair: () => this.submitPair(),
+      fillPairDemo: () => this.setState({ pairKey: 'TOSS-AI-7K2F-9XQD', pairStatus: '' }),
+      pairBtnLabel: this.state.pairStatus === 'verifying' ? '확인 중…' : this.state.pairStatus === 'ok' ? '확인 완료' : '페어링 확인',
+      pairBtnBg: this.state.pairKey.trim().length >= 4 ? (this.state.pairStatus === 'ok' ? '#12B886' : '#3182F6') : '#E5E8EB',
+      pairBtnColor: this.state.pairKey.trim().length >= 4 ? '#fff' : '#B0B8C1',
+      pairCursor: (this.state.pairKey.trim().length >= 4 && this.state.pairStatus !== 'verifying') ? 'pointer' : 'not-allowed',
+      appKey: this.state.appKey,
+      onAppKey: (e) => this.setState({ appKey: e.target.value }),
+      appKeyDone: this.state.appKey.trim().length >= 4,
+      appKeyBorder: this.state.appKey.trim().length >= 4 ? '#3182F6' : '#E5E8EB',
+      secretKey: this.state.secretKey, secretType: this.state.showSecret ? 'text' : 'password',
+      onSecretKey: (e) => this.setState({ secretKey: e.target.value }),
+      secretBorder: this.state.secretKey.trim().length >= 4 ? '#3182F6' : '#E5E8EB',
+      showSecret: this.state.showSecret, toggleSecret: () => this.setState({ showSecret: !this.state.showSecret }),
+      secretToggleLabel: this.state.showSecret ? '숨기기' : '보기',
+      fillDemo: () => this.setState({ appKey: 'tskey_live_8f3a91c20d', secretKey: 'sk_2b7e4f9a1c6d8e0fa3b5' }),
+      keysValid: this.state.appKey.trim().length >= 4 && this.state.secretKey.trim().length >= 4,
+      connectBtnBg: (this.state.appKey.trim().length >= 4 && this.state.secretKey.trim().length >= 4) ? '#3182F6' : '#E5E8EB',
+      connectBtnColor: (this.state.appKey.trim().length >= 4 && this.state.secretKey.trim().length >= 4) ? '#fff' : '#B0B8C1',
+      connectCursor: (this.state.appKey.trim().length >= 4 && this.state.secretKey.trim().length >= 4) ? 'pointer' : 'not-allowed',
+      loadingTitle: '토스증권에 연결 중이에요', loadingSub: 'API 키를 인증하고 잔고를 불러오고 있어요',
+      loadSteps: [
+        { label: 'API 키 인증', mark: '✓', bg: '#12B886', color: '#191F28', weight: 600 },
+        { label: '계좌 잔고 조회', mark: '✓', bg: '#12B886', color: '#191F28', weight: 600 },
+        { label: '보유 종목 동기화', mark: '', bg: '#3182F6', color: '#3182F6', weight: 700 },
+      ],
+
+      isHome: sc === 'home', isExplore: sc === 'explore', isDetail: sc === 'detail', isAI: sc === 'ai', isWatch: sc === 'watch', isSettings: sc === 'settings',
+      goHome: () => this.go('home'), goExplore: () => this.go('explore'), goWatch: () => this.go('watch'), goSettings: () => this.go('settings'),
+      goAI: () => this.goAI(), back: () => this.back(),
+
+      totalValueStr: '₩' + this.fmt(val), totalCostStr: '₩' + this.fmt(cost),
+      totalGainStr, totalGainEl: this.bigNum(totalGainStr, totalUp),
+      holdings, holdingsCount: held.length,
+
+      stock, sectors, scoreRing, insights, messages, suggestions,
+      watchItems, watchCount: wset.length, watchEmpty: wset.length === 0,
+
+      query: this.state.query, hasQuery: this.state.query.length > 0,
+      onSearch: (e) => this.setState({ query: e.target.value }),
+      clearQuery: () => this.setState({ query: '' }),
+      marketChips: chips, exploreItems, exploreEmpty: exploreItems.length === 0,
+      exploreHeader: q ? '검색 결과 ' + exploreItems.length + '개' : (mf === '전체' ? '실시간 인기 종목' : mf + ' 종목'),
+
+      showTab: (sc === 'home' || sc === 'explore' || sc === 'watch' || sc === 'settings'),
+      showFab: (sc === 'home' || sc === 'explore' || sc === 'watch'),
+      homeTabColor: sc === 'home' ? blue : gray,
+      exploreTabColor: sc === 'explore' ? blue : gray,
+      watchTabColor: sc === 'watch' ? blue : gray,
+      settingsTabColor: sc === 'settings' ? blue : gray,
+
+      pushToggle: this.toggleEl(this.state.pushOn), togglePush: () => this.setState({ pushOn: !this.state.pushOn }),
+      subOpacity: this.state.pushOn ? '1' : '0.4',
+      priceToggle: this.toggleEl(this.state.pushOn && this.state.alertPrice), toggleAlertPrice: () => this.state.pushOn && this.setState({ alertPrice: !this.state.alertPrice }),
+      aiToggle: this.toggleEl(this.state.pushOn && this.state.alertAI), toggleAlertAI: () => this.state.pushOn && this.setState({ alertAI: !this.state.alertAI }),
+      targetToggle: this.toggleEl(this.state.pushOn && this.state.alertTarget), toggleAlertTarget: () => this.state.pushOn && this.setState({ alertTarget: !this.state.alertTarget }),
+      dndOn: this.state.dndOn, dndToggle: this.toggleEl(this.state.dndOn), toggleDnd: () => this.setState({ dndOn: !this.state.dndOn }),
+      dndRange: dndRanges[this.state.dndIdx], cycleDnd: () => this.setState({ dndIdx: (this.state.dndIdx + 1) % dndRanges.length }),
+    };
+  }
+
+  makeChart(up) {
+    const color = up ? '#F04452' : '#3182F6';
+    const pts = up ? '0,90 30,82 60,86 90,60 120,66 150,40 180,46 210,28 240,34 270,18 300,24 330,8'
+                   : '0,20 30,28 60,22 90,44 120,38 150,58 180,52 210,70 240,64 270,82 300,76 330,92';
+    return React.createElement('svg', { viewBox: '0 0 330 110', preserveAspectRatio: 'none', style: { width: '100%', height: '100%' } },
+      React.createElement('defs', null, React.createElement('linearGradient', { id: 'g' + (up ? 'u' : 'd'), x1: '0', y1: '0', x2: '0', y2: '1' },
+        React.createElement('stop', { offset: '0', stopColor: color, stopOpacity: '0.18' }),
+        React.createElement('stop', { offset: '1', stopColor: color, stopOpacity: '0' }))),
+      React.createElement('polyline', { points: pts + ' 330,110 0,110', fill: 'url(#g' + (up ? 'u' : 'd') + ')', stroke: 'none' }),
+      React.createElement('polyline', { points: pts, fill: 'none', stroke: color, strokeWidth: '2.5', strokeLinejoin: 'round', strokeLinecap: 'round' }));
+  }
+}
+</script>
+</body>
+</html>
