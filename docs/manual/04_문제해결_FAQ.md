@@ -29,3 +29,9 @@
 
 ## 라이브러리 추가했는데 import 안 됨
 - `uv add <패키지>` 후 서버 재시작. (또는 `uv sync`)
+
+## `python` 실행 시 "SRE module mismatch" / 이상한 표준라이브러리 에러
+- 원인: **`PYTHONHOME` 환경변수**가 다른 버전 파이썬을 가리켜, 인터프리터(python.exe)와 표준라이브러리(Lib) 버전이 어긋남.
+- 확인(PowerShell): `[Environment]::GetEnvironmentVariable("PYTHONHOME","User")`
+- 해결: 삭제 → `[Environment]::SetEnvironmentVariable("PYTHONHOME", $null, "User")` → **새 터미널** 열기.
+- ※ `PYTHONHOME`은 보통 설정하면 안 되는 값. 파이썬이 여러 개 깔려 있어도 각자 자기 Lib을 쓰게 두면 됨. (버전 전환은 `py -3.12` 또는 uv 사용)

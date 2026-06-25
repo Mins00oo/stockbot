@@ -11,19 +11,24 @@
 | `TOSS_KEY_ENC_KEY` | (Fernet 키) | 토스 키를 **암호화**해 DB에 저장할 때 쓰는 키 |
 | `TOSS_BASE_URL` | `https://openapi.tossinvest.com` | 토스 API 주소 |
 
-## 값 만드는 법
+## 값 만드는 법 (둘 다 *직접 타이핑하지 말고 명령으로 생성*)
 
-### PAIRING_KEY
-아무 긴 랜덤 문자열. 예: 비밀번호 생성기, 또는:
+### PAIRING_KEY — 안전한 랜덤이면 OK (형식 자유)
+손으로 치면 약하니 명령으로 생성:
 ```powershell
-uv run python -c "import secrets; print(secrets.token_urlsafe(32))"
+python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
+→ 나온 값을 `.env`의 `PAIRING_KEY` + 앱 온보딩 1단계에 **같은 값** 붙여넣기.
 
-### TOSS_KEY_ENC_KEY (암호화 키)
+### TOSS_KEY_ENC_KEY — 아무 문자열 ❌, **반드시 Fernet 형식**(32바이트 base64)
+막 지은 문자열을 넣으면 앱이 에러남. 무조건 생성기로:
 ```powershell
 uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
 ```
-→ 출력값을 그대로 붙여넣기. **이 키를 잃어버리면 저장된 토스 키를 복호화 못 함** — 잘 보관.
+(`cryptography` 필요 → `uv sync` 후 `uv run`으로. 안 깔렸으면 `pip install cryptography` 먼저)
+→ 출력값 그대로 붙여넣기. ⚠️ **이 키를 잃어버리거나 바꾸면** DB에 저장된 토스 키를 **복호화 못 함** → 토스 재연결 필요. 잘 보관.
+
+> 🔒 이 명령들은 *네 PC에서 직접* 실행 — 비밀이 채팅/로그에 안 남게.
 
 ---
 

@@ -1,0 +1,47 @@
+{
+  "name": "stockbot",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "lint": "expo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json}\""
+  },
+  "dependencies": {
+    "expo": "~56.0.0",
+    "expo-router": "56.2.11",
+    "expo-constants": "~19.0.0",
+    "expo-linking": "~9.0.0",
+    "expo-status-bar": "~3.0.0",
+    "expo-secure-store": "~16.0.0",
+    "expo-local-authentication": "~18.0.0",
+    "expo-dev-client": "~6.0.0",
+    "expo-splash-screen": "~32.0.0",
+    "expo-system-ui": "~6.0.0",
+    "react": "19.2.0",
+    "react-native": "0.85.0",
+    "react-native-safe-area-context": "~5.4.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-reanimated": "~4.0.0",
+    "@tanstack/react-query": "5.101.1",
+    "zustand": "5.0.14",
+    "axios": "1.18.1",
+    "react-hook-form": "7.80.0",
+    "zod": "4.4.3",
+    "@hookform/resolvers": "5.4.0",
+    "nativewind": "^4.1.23",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.0",
+    "typescript": "~5.9.0",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~10.0.0",
+    "prettier": "^3.3.0",
+    "prettier-plugin-tailwindcss": "^0.6.0"
+  },
+  "private": true
+}

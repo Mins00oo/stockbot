@@ -73,6 +73,7 @@
     "totalValueKrw": 12500000,
     "totalPnlKrw": 320000,
     "totalPnlRate": 2.6,
+    "totalPurchaseKrw": 12180000,
     "holdings": [
       {
         "symbol": "005930", "name": "삼성전자", "market": "KR",
@@ -106,7 +107,8 @@
 | `pnlRate` | number | 손익률(%) |
 | `currency` | `"KRW"` \| `"USD"` | 통화 |
 
-- **원화 환산**: 미국주식(USD)은 토스 환율로 환산해 `evalAmountKrw` 제공. 총합(`totalValueKrw`)·정렬은 원화환산 기준.
+- **총합은 토스 raw**: `totalValueKrw`·`totalPnlKrw`·`totalPnlRate`·`totalPurchaseKrw`(투자원금)는 우리가 합산·계산하지 않고 **토스 계좌 overview 값(환율·수수료 반영)을 그대로** 사용 → 토스 앱과 숫자 일치. (종목별 `evalAmountKrw`만 정렬·표시용으로 환율 환산)
+- **현재가**: holdings의 `lastPrice` 사용. 실시간성은 프론트가 `/holdings`를 **3초 주기 재조회**(포그라운드·장중)로 확보 — 별도 `/prices` 미사용.
 - **색상**(상승=빨강/하락=파랑)은 **프론트가 `pnl` 부호로 판단** (한국식). 정렬은 `evalAmountKrw` 내림차순.
 
 ---

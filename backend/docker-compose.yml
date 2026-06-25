@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: stockbot
+      POSTGRES_PASSWORD: stockbot
+      POSTGRES_DB: stockbot
+    ports:
+      - "5432:5432"
+    volumes:
+      - stockbot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stockbot -d stockbot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  stockbot_pgdata:
