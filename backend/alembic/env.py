@@ -1,18 +1,19 @@
-"""Alembic environment — async-aware.
+"""Alembic environment — synchronous.
 
 Reads the database URL from the application Settings (which loads .env) so the
-migration config stays in one place, and uses SQLAlchemy's async engine.
+migration config stays in one place. Migrations are sequential and don't need
+async, so this uses a plain (sync) SQLAlchemy engine — which also sidesteps the
+Windows ProactorEventLoop / psycopg-async incompatibility entirely.
+(The app server itself stays async; only migrations are sync.)
 """
 
 from __future__ import annotations
 
-import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from stockbot.core.config import get_settings
 from stockbot.core.db import Base
@@ -55,21 +56,21 @@ def do_run_migrations(connection: Connection) -> None:
         context.run_migrations()
 
 
-async def run_migrations_online() -> None:
-    """Run migrations in 'online' mode with an async engine."""
-    connectable = async_engine_from_config(
+def run_migrations_online() -> None:
+    """Run migrations in 'online' mode with a synchronous engine."""
+    connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
+    with connectable.connect() as connection:
+        do_run_migrations(connection)
 
-    await connectable.dispose()
+    connectable.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    asyncio.run(run_migrations_online())
+    run_migrations_online()

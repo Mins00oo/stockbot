@@ -6,6 +6,9 @@ handlers so services only ever raise typed errors.
 
 from __future__ import annotations
 
+import asyncio
+import sys
+
 from fastapi import FastAPI
 
 from stockbot.core.error_handlers import register_exception_handlers
@@ -13,6 +16,12 @@ from stockbot.core.logging import setup_logging
 from stockbot.domain.auth.router import router as auth_router
 from stockbot.domain.health.router import router as health_router
 from stockbot.domain.portfolio.router import router as portfolio_router
+
+# Windows only: psycopg's async mode can't run on the default ProactorEventLoop,
+# so force the SelectorEventLoop before uvicorn creates the loop. (Set at import
+# time, before serving.) Guarded by platform → no-op on Linux (the prod VM).
+if sys.platform == "win32":
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
 def create_app() -> FastAPI:
