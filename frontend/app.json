@@ -13,7 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#3182F6"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.stockbot.app"
@@ -33,7 +35,9 @@
         {
           "faceIDPermission": "기기 잠금으로 페어링을 보호하기 위해 Face ID를 사용해요."
         }
-      ]
+      ],
+      "expo-status-bar",
+      "expo-splash-screen"
     ],
     "experiments": {
       "typedRoutes": true
