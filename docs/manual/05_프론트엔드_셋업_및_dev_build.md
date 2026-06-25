@@ -36,7 +36,17 @@ npx expo install --fix
 Copy-Item .env.example .env
 # .env 열어서 EXPO_PUBLIC_API_URL 설정
 ```
-*용도*: 앱이 백엔드를 부를 주소. **실기기 = PC의 LAN IP**(`http://192.168.x.x:8000`), **시뮬레이터 = `http://localhost:8000`**.
+*용도*: 앱이 백엔드를 부를 주소(`EXPO_PUBLIC_API_URL`). **IP 헷갈리지 말 것:**
+
+| 앱 실행 위치 | `EXPO_PUBLIC_API_URL` 값 |
+|---|---|
+| **실기기(폰)** | `http://<PC의 LAN IP>:8000` ← `localhost` 쓰면 안 됨(폰 자신을 가리킴) |
+| iOS 시뮬레이터 / 웹 | `http://localhost:8000` |
+| Android 에뮬레이터 | `http://10.0.2.2:8000` |
+
+- **LAN IP 찾기**: PowerShell에 `ipconfig` → **IPv4 주소**(예 `192.168.0.10`) → `EXPO_PUBLIC_API_URL=http://192.168.0.10:8000`
+- 실기기면 **백엔드도 `--host 0.0.0.0`** 으로 떠 있어야 하고(`01`), 폰·PC가 **같은 와이파이**여야 함.
+- ⚠️ `.env`를 바꾸면 **`npx expo start --clear`** 로 재시작해야 반영됨(값이 번들에 박힘).
 
 ### 5) development build 만들기 — [필수, 1회] (방법 A 또는 B 중 택1)
 *용도*: Expo Go 대신 **내 프로젝트 전용 앱**을 빌드해 폰에 설치.
