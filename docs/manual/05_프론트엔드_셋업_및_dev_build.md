@@ -5,7 +5,7 @@
 > ※ Expo Go는 안 씀(SDK56 호환 이슈 + 한계). **development build**(내 전용 앱)로 개발.
 
 ## 전제 (PC에 1회)
-- **[필수] Node.js** — *용도*: JS 패키지 설치·Expo 실행. (LTS 버전 설치)
+- **[필수] Node.js — 22 LTS 권장** (최소 `20.19.4+` / SDK56·RN0.85가 요구). *용도*: JS 패키지·Expo 실행. ⚠️ 버전 낮으면 `npm install`은 돼도 `expo start`에서 터질 수 있음. (설치: `winget install OpenJS.NodeJS.LTS` 또는 nodejs.org)
 - **[선택] Expo 계정** — *용도*: EAS(클라우드) 빌드 쓸 때 필요. (무료 가입)
 - **[선택] Android Studio** — *용도*: dev build를 *로컬*에서 만들 때만(Windows에서 Android 한정).
 
@@ -23,13 +23,13 @@ cd D:\work\project\workspace\Prj\stockbot\frontend
 ```powershell
 npm install
 ```
-*용도*: `package.json`의 라이브러리 설치 → `node_modules` 생성.
+*용도*: `package.json`의 라이브러리 설치 → `node_modules` 생성. (`.npmrc`가 커밋돼 있어 peer 충돌 자동 처리 — 플래그 불필요.)
 
-### 3) expo 패키지 버전 정렬 — [필수] (이번엔 꼭)
+### 3) (참고) expo 패키지 버전 정렬 — [선택, 보통 불필요]
 ```powershell
 npx expo install --fix
 ```
-*용도*: expo·react·react-native·nativewind 등을 **SDK 56 호환 버전**으로 자동 정렬. *지금 `package.json` 버전이 placeholder라 이걸 안 하면 버전 충돌로 안 켜질 수 있음.*
+*용도*: expo 패키지가 SDK와 어긋났을 때 정렬. **현재 저장소는 이미 SDK56 정답 버전으로 맞춰 커밋돼 있어 보통 안 해도 됨.** (나중에 SDK 올리거나 버전 꼬였을 때만.)
 
 ### 4) `.env` 만들기 — [필수]
 ```powershell

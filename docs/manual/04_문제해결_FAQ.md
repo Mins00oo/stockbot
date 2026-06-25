@@ -35,3 +35,11 @@
 - 확인(PowerShell): `[Environment]::GetEnvironmentVariable("PYTHONHOME","User")`
 - 해결: 삭제 → `[Environment]::SetEnvironmentVariable("PYTHONHOME", $null, "User")` → **새 터미널** 열기.
 - ※ `PYTHONHOME`은 보통 설정하면 안 되는 값. 파이썬이 여러 개 깔려 있어도 각자 자기 Lib을 쓰게 두면 됨. (버전 전환은 `py -3.12` 또는 uv 사용)
+
+## 프론트 `npm install`이 ERESOLVE / ETARGET 로 실패
+- 원인: expo 패키지 버전 불일치. **현재 저장소는 이미 해결됨** — 올바른 SDK56 버전 + `.npmrc`(`legacy-peer-deps=true`) 커밋돼 있어 그냥 `npm install`이면 됨.
+- 그래도 새로 꼬이면: `npx expo install --fix` (SDK 호환 버전으로 정렬).
+
+## 설치 시 `EBADENGINE`(Unsupported engine) 경고 / `expo start`가 안 됨
+- 원인: **Node 버전이 낮음.** Expo SDK56·RN0.85는 Node `20.19.4+`(또는 22/24) 필요.
+- 해결: **Node 22 LTS로 업그레이드** (`winget install OpenJS.NodeJS.LTS` 또는 nodejs.org) → 새 터미널 → `node --version` 확인 → `npm install` 다시.
