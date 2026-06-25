@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -31,13 +31,28 @@ export default function PairingScreen() {
 
   const verify = usePairingVerify();
   const [verified, setVerified] = useState(false);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Go to step 2. Cancels any pending auto-advance so a manual tap and the
+  // post-verify timer can't both fire (no double push).
+  const goToTossKey = () => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    router.push("/onboarding/toss-key");
+  };
+
+  // Clear the auto-advance timer if we leave before it fires.
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    };
+  }, []);
 
   const tooShort = pairKey.trim().length < 4;
   const errorMsg =
     verify.isError && !verify.isPending
       ? verify.error instanceof ApiError
         ? verify.error.message
-        : "페어링 키가 올바르지 않아요. 디스코드에서 다시 확인해 주세요."
+        : "페어링 키가 올바르지 않아요."
       : null;
 
   const status: "idle" | "verifying" | "ok" | "error" = verify.isPending
@@ -53,8 +68,8 @@ export default function PairingScreen() {
     verify.mutate(pairKey.trim(), {
       onSuccess: () => {
         setVerified(true);
-        // brief success state, then advance to step 2.
-        setTimeout(() => router.push("/onboarding/toss-key"), 650);
+        // brief success state, then auto-advance to step 2 (first time through).
+        advanceTimer.current = setTimeout(goToTossKey, 650);
       },
     });
   });
@@ -62,7 +77,7 @@ export default function PairingScreen() {
   const btnLabel = verify.isPending
     ? "확인 중…"
     : verified
-      ? "확인 완료"
+      ? "다음"
       : "페어링 확인";
   const btnBg = verified ? colors.success : undefined;
 
@@ -109,12 +124,7 @@ export default function PairingScreen() {
               letterSpacing: -0.3,
             }}
           >
-            내 주식 비서(AI)와 앱을 연결하는 키예요.{"\n"}
-            디스코드 봇의{" "}
-            <Text style={{ fontWeight: "700", color: colors.text.body }}>
-              /페어링
-            </Text>{" "}
-            명령으로 발급받을 수 있어요.
+            내 주식 비서(AI)와 앱을 연결하는 키예요.
           </Text>
 
           <View style={{ marginTop: 30 }}>
@@ -128,12 +138,13 @@ export default function PairingScreen() {
                   onChangeText={(t) => {
                     onChange(t);
                     if (verified) setVerified(false);
+                    if (advanceTimer.current) clearTimeout(advanceTimer.current);
                     verify.reset();
                   }}
                   placeholder="예: TOSS-AI-XXXX-XXXX"
                   status={status}
                   letterSpacing={0.5}
-                  editable={!verify.isPending && !verified}
+                  editable={!verify.isPending}
                 />
               )}
             />
@@ -163,28 +174,12 @@ export default function PairingScreen() {
           <View style={{ marginTop: 24 }}>
             <PrimaryButton
               label={btnLabel}
-              onPress={onSubmit}
-              disabled={tooShort || verified}
+              onPress={verified ? goToTossKey : onSubmit}
+              disabled={verified ? false : tooShort}
               loading={verify.isPending}
               backgroundColor={btnBg}
             />
           </View>
-
-          <Pressable
-            onPress={() => setValue("pairKey", DEMO_PAIRING_KEY)}
-            style={{ marginTop: 12 }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 12.5,
-                color: colors.primary,
-                fontWeight: "600",
-              }}
-            >
-              데모 페어링 키로 채우기
-            </Text>
-          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
