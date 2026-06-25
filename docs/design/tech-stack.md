@@ -89,7 +89,7 @@
 | 보안 저장 | **expo-secure-store** | SDK56 호환판 (페어링 키) |
 | 기기 잠금 | **expo-local-authentication** | SDK56 호환판 (지문/Face/PIN) |
 | 코드 품질 | **ESLint + Prettier** | Expo 기본 (`expo lint`) |
-| UI/스타일 | **NativeWind (Tailwind)** | 핸드오프 디자인 토큰(색·spacing·radius 등)을 tailwind 설정에 매핑. 컴포넌트 킷(Paper/Tamagui)은 회피. 정확한 버전(nativewind/tailwindcss)은 프론트 스캐폴드 시 실시간 확정 |
+| UI/스타일 | **인라인 스타일 + `theme/tokens.ts`** | 핸드오프 토큰(색·radius·shadow)을 TS 상수로 매핑해 인라인 `style`로 사용. 컴포넌트 킷(Paper/Tamagui)은 회피. (초기엔 NativeWind/Tailwind였으나 인라인 스타일과 충돌해 2026-06-25 제거 — `docs/manual/07`) |
 | 보류 | async-storage / 차트(victory-native 등) | 필요 시 추가 |
 | 제외 | expo-notifications | 푸시는 디스코드가 담당 → 불필요 |
 

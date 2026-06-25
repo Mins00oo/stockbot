@@ -19,9 +19,11 @@ npm install
 npx expo install --fix
 
 # 3) 환경변수
-cp .env.example .env
-#    실기기로 개발 시 EXPO_PUBLIC_API_URL을 PC의 LAN IP로 바꾸세요.
-#    예: EXPO_PUBLIC_API_URL=http://192.168.0.10:8000
+cp .env.example .env   # (Windows: Copy-Item .env.example .env)
+#    실기기(폰)면 EXPO_PUBLIC_API_URL을 PC의 LAN IP로! (localhost는 폰 자신 → 안 됨)
+#    IP 찾기: ipconfig → IPv4.  예: EXPO_PUBLIC_API_URL=http://192.168.0.10:8000
+#    + 백엔드를 --host 0.0.0.0으로 실행, 폰·PC 같은 와이파이. .env 바꾸면 expo start --clear.
+#    (자세히: docs/manual/05)
 
 # 4) 네이티브 빌드 실행 (dev client)
 npx expo run:ios       # 또는
@@ -60,16 +62,17 @@ src/
 
 ## 디자인 토큰
 
-핸드오프 토큰을 `tailwind.config.js`(NativeWind 클래스)와 `src/theme/tokens.ts`(인라인
-스타일)에 양쪽으로 매핑했어요.
+스타일은 **인라인 스타일 + `src/theme/tokens.ts`** 로 통일했어요(색·radius·shadow).
+NativeWind(Tailwind)는 안 써요 — 초기에 넣었다가 인라인 스타일과 충돌해 제거했어요
+(자세히: `docs/manual/07_트러블슈팅_기록.md`).
 
 **한국식 색상 컨벤션**: 상승/이익 = 빨강 `#F04452`, 하락/손실 = 파랑 `#3182F6`.
 `pnlColor(value)` 헬퍼가 부호로 색을 결정해요.
 
 ## 폰트 (Pretendard) — TODO
 
-핸드오프는 **Pretendard**를 사용해요. 현재 `fontFamily: ["Pretendard", "System"]`로
-매핑되어 있지만 폰트 파일은 아직 번들되지 않았어요 (시스템 폰트로 폴백).
+핸드오프는 **Pretendard**를 사용해요. 현재는 시스템 폰트로 폴백 중이고, Pretendard
+폰트 파일은 아직 번들되지 않았어요.
 
 권장 셋업 (둘 중 하나):
 - **번들**: Pretendard `.otf`/`.ttf`를 `assets/fonts/`에 넣고 `expo-font`의

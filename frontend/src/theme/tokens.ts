@@ -1,6 +1,6 @@
 /**
- * Design tokens mirrored from the handoff spec so they're usable in plain TS
- * (StyleSheet, inline color props) where Tailwind class names aren't convenient.
+ * Design tokens mirrored from the handoff spec, used via inline styles across the app.
+ * Styling is inline-only — NativeWind/Tailwind was removed (see docs/manual/07).
  * Source: docs/design/screens/design_handoff_toss_stock_assistant/README.md
  *
  * Korean market convention:
