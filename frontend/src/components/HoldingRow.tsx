@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 
 import { LogoChip } from "./LogoChip";
 
-import { fmtInt, marketLabel, money, signedPct } from "@/lib/format";
+import { marketLabel, money, qty, signedKrw, signedPct } from "@/lib/format";
 import { colors, pnlColor } from "@/theme/tokens";
 import type { Holding } from "@/types/api";
 
@@ -17,7 +17,7 @@ interface HoldingRowProps {
  * Color follows pnl sign (Korean convention): up=red, down=blue.
  */
 export function HoldingRow({ holding, onPress }: HoldingRowProps) {
-  const sub = `${marketLabel(holding.market)} · ${fmtInt(holding.quantity)}주`;
+  const sub = `${marketLabel(holding.market)} · ${qty(holding.quantity)}주`;
   const valueStr = money(holding.currency, holding.evalAmount);
   const changeColor = pnlColor(holding.pnl);
 
@@ -62,12 +62,12 @@ export function HoldingRow({ holding, onPress }: HoldingRowProps) {
         <Text
           style={{
             marginTop: 2,
-            fontSize: 14,
+            fontSize: 13.5,
             fontWeight: "700",
             color: changeColor,
           }}
         >
-          {signedPct(holding.pnlRate)}
+          {signedKrw(holding.pnlKrw)}  {signedPct(holding.pnlRate)}
         </Text>
       </View>
     </Pressable>

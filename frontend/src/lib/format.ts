@@ -48,6 +48,19 @@ export function signedKrwWithPct(amount: number, rate: number): string {
   );
 }
 
+/** "+₩30,000" / "-₩2,800" — signed KRW amount (per-holding pnl in KRW). */
+export function signedKrw(amount: number): string {
+  return (amount >= 0 ? "+" : "-") + "₩" + fmtInt(Math.abs(amount));
+}
+
+/**
+ * Share quantity. Integers stay clean ("5"); fractional shares (US) keep up to
+ * 6 decimals with trailing zeros trimmed ("0.128308", "1.25").
+ */
+export function qty(n: number): string {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 6 });
+}
+
 /** First grapheme of a name, used as logo initial fallback. */
 export function initial(name: string): string {
   return name ? Array.from(name)[0] : "?";
@@ -83,4 +96,43 @@ export function logoBgFor(symbol: string): string {
 /** Market label for display; backend gives "KR"|"US". */
 export function marketLabel(market: "KR" | "US"): string {
   return market === "KR" ? "국내" : "미국";
+}
+
+/** Narrow a raw Toss currency string to our union (anything non-USD -> KRW). */
+export function asCurrency(c: string | null | undefined): Currency {
+  return c === "USD" ? "USD" : "KRW";
+}
+
+/** "+$1.23" / "-₩1,000" — signed money in the value's own currency. */
+export function signedMoney(currency: Currency, n: number): string {
+  return (n >= 0 ? "+" : "-") + money(currency, Math.abs(n));
+}
+
+/**
+ * Compact market-cap string.
+ *   KRW -> "412조 3,456억" (조=1e12, 억=1e8)
+ *   USD -> "$3.42T" / "$1.20B" / "$5.30M"
+ */
+export function marketCapStr(currency: Currency, n: number): string {
+  if (currency === "KRW") {
+    const jo = Math.floor(n / 1e12);
+    const eok = Math.round((n - jo * 1e12) / 1e8);
+    if (jo > 0) return `${fmtInt(jo)}조${eok > 0 ? " " + fmtInt(eok) + "억" : ""}`;
+    if (eok > 0) return `${fmtInt(eok)}억`;
+    return krw(n);
+  }
+  if (n >= 1e12) return "$" + (n / 1e12).toFixed(2) + "T";
+  if (n >= 1e9) return "$" + (n / 1e9).toFixed(2) + "B";
+  if (n >= 1e6) return "$" + (n / 1e6).toFixed(2) + "M";
+  return money("USD", n);
+}
+
+/** "오후 1:23:45" style HH:MM:SS from an ISO/parseable timestamp (체결 시각). */
+export function timeOfDay(ts: string): string {
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return ts;
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const ss = String(d.getSeconds()).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
 }

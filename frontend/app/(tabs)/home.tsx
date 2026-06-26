@@ -1,4 +1,5 @@
 import { router } from "expo-router";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -14,6 +15,7 @@ import { Card, HoldingRow, PrimaryButton } from "@/components";
 import { useHoldings } from "@/hooks/useHoldings";
 import { krw, signedKrwWithPct } from "@/lib/format";
 import { colors, pnlColor, shadow } from "@/theme/tokens";
+import type { Holding } from "@/types/api";
 
 interface QuickAction {
   emoji: string;
@@ -57,15 +59,26 @@ function SearchIcon() {
 }
 
 export default function HomeScreen() {
-  const { data, isLoading, isError, error, refetch, isRefetching } =
-    useHoldings();
+  const { data, isLoading, isError, error, refetch } = useHoldings();
+  const [pulling, setPulling] = useState(false);
+
+  // Spinner shows only on user pull-to-refresh; the background poll
+  // (refetchInterval = POLL_INTERVAL_MS in useHoldings) updates data silently.
+  const onPull = async () => {
+    setPulling(true);
+    try {
+      await refetch();
+    } finally {
+      setPulling(false);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={["top"]}>
       <ScrollView
         contentContainerStyle={{ paddingTop: 8, paddingBottom: 28 }}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          <RefreshControl refreshing={pulling} onRefresh={onPull} />
         }
       >
         {/* header */}
@@ -254,32 +267,65 @@ export default function HomeScreen() {
               </Text>
             </View>
 
-            {/* holdings list */}
-            <Card
-              style={{ marginHorizontal: 12 }}
-              rounded={18}
-              padding={6}
-            >
-              {data.holdings.map((h) => (
-                <HoldingRow key={h.symbol} holding={h} onPress={() => {}} />
-              ))}
-              {data.holdings.length === 0 ? (
+            {/* holdings — grouped 국내 / 해외 */}
+            {data.holdings.length === 0 ? (
+              <Card style={{ marginHorizontal: 12 }} rounded={18} padding={6}>
                 <View style={{ padding: 40, alignItems: "center" }}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.text.dim,
-                    }}
-                  >
+                  <Text style={{ fontSize: 14, color: colors.text.dim }}>
                     보유 중인 종목이 없어요
                   </Text>
                 </View>
-              ) : null}
-            </Card>
+              </Card>
+            ) : (
+              <>
+                <HoldingsGroup
+                  title="국내"
+                  holdings={data.holdings.filter((h) => h.market === "KR")}
+                />
+                <HoldingsGroup
+                  title="해외"
+                  holdings={data.holdings.filter((h) => h.market === "US")}
+                />
+              </>
+            )}
           </>
         ) : null}
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/** One market group (국내/해외) — subheader + a card of its holdings. */
+function HoldingsGroup({
+  title,
+  holdings,
+}: {
+  title: string;
+  holdings: Holding[];
+}) {
+  if (holdings.length === 0) return null;
+  return (
+    <>
+      <View style={{ paddingHorizontal: 20, paddingTop: 14, paddingBottom: 8 }}>
+        <Text style={{ fontSize: 14, fontWeight: "700", color: colors.text.sub }}>
+          {title} <Text style={{ color: colors.text.dim }}>{holdings.length}</Text>
+        </Text>
+      </View>
+      <Card style={{ marginHorizontal: 12 }} rounded={18} padding={6}>
+        {holdings.map((h) => (
+          <HoldingRow
+            key={h.symbol}
+            holding={h}
+            onPress={() =>
+              router.push({
+                pathname: "/stock/[symbol]",
+                params: { symbol: h.symbol, market: h.market, name: h.name },
+              })
+            }
+          />
+        ))}
+      </Card>
+    </>
   );
 }
 
