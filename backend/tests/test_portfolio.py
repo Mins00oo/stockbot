@@ -40,11 +40,12 @@ class _MockTossPortfolio(TossClient):
 
 
 _OVERVIEW = {
-    # Account-level totals (raw from Toss) — intentionally NOT equal to the sum
-    # of items, to prove the service uses these directly rather than summing.
-    "totalPurchaseAmount": {"krw": "6500000"},
-    "marketValue": {"amount": {"krw": "7200000"}},
-    "profitLoss": {"amount": {"krw": "700000"}, "rate": "0.1077"},
+    # Account-level buckets (raw from Toss): krw = domestic, usd = foreign (USD).
+    # Toss gives no combined total, so the service converts the usd bucket at the
+    # FX rate and adds it. Values are intentionally NOT the item sums.
+    "totalPurchaseAmount": {"krw": "6500000", "usd": "1000.0"},
+    "marketValue": {"amount": {"krw": "7200000", "usd": "1100.0"}},
+    "profitLoss": {"amount": {"krw": "700000", "usd": "100.0"}, "rate": "0.1077"},
     "items": [
         {
             "symbol": "005930",
@@ -99,11 +100,18 @@ async def test_holdings_service_assembles_and_converts(monkeypatch):
     assert by_symbol["AAPL"].currency == "USD"
     assert by_symbol["AAPL"].pnlRate == pytest.approx(8.33)
 
-    # Totals come straight from the Toss overview (raw), not summed by us.
-    assert resp.totalValueKrw == pytest.approx(7200000)
-    assert resp.totalPnlKrw == pytest.approx(700000)
-    assert resp.totalPnlRate == pytest.approx(10.77)
-    assert resp.totalPurchaseKrw == pytest.approx(6500000)
+    # pnlKrw: KR pnl stays as-is; US pnl (75 USD) converts at the rate (1380).
+    assert by_symbol["005930"].pnlKrw == pytest.approx(20000)
+    assert by_symbol["AAPL"].pnlKrw == pytest.approx(75.0 * 1380)
+
+    # Totals = Toss KRW bucket + USD bucket converted at the rate (1380):
+    #   value:    7,200,000 + 1100*1380 = 8,718,000
+    #   purchase: 6,500,000 + 1000*1380 = 7,880,000
+    #   pnl:      8,718,000 - 7,880,000 = 838,000  ->  838000/7880000 = 10.63%
+    assert resp.totalValueKrw == pytest.approx(8_718_000)
+    assert resp.totalPurchaseKrw == pytest.approx(7_880_000)
+    assert resp.totalPnlKrw == pytest.approx(838_000)
+    assert resp.totalPnlRate == pytest.approx(10.63)
 
     # Sorted by evalAmountKrw descending (AAPL ~1.35M > Samsung 720k).
     assert resp.holdings[0].symbol == "AAPL"

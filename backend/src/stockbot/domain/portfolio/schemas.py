@@ -20,6 +20,7 @@ class Holding(BaseModel):
     evalAmount: float
     evalAmountKrw: float
     pnl: float
+    pnlKrw: float  # pnl converted to KRW (US uses the FX rate; KR == pnl)
     pnlRate: float
     currency: CurrencyCode
 

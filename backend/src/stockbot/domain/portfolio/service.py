@@ -3,9 +3,13 @@
 Flow:
   1. Load the single credentials row; if absent -> NotConnected.
   2. Decrypt the Toss keys, build a TossClient.
-  3. Fetch holdings (+ prices for current-price freshness, + USD->KRW rate).
-  4. Map each Toss HoldingsItem to our Holding shape, converting USD evals to KRW.
-  5. Compute totals in KRW; sort holdings by evalAmountKrw descending.
+  3. Fetch the holdings overview (+ USD->KRW rate, only when a US holding exists).
+     Current price = the overview's lastPrice; we do NOT call /prices.
+  4. Map each Toss item to our Holding shape, converting USD evals to KRW.
+  5. Sort holdings by evalAmountKrw descending. Account-level totals: Toss's
+     overview gives per-currency buckets (krw = domestic, usd = foreign in USD)
+     with no combined total, so we add the USD bucket converted at the Toss FX
+     rate to the KRW bucket.
 
 All Toss money values arrive as STRINGS and are parsed with Decimal; results are
 emitted as floats (the API contract uses JSON numbers). Only KRW/USD are handled.
@@ -87,6 +91,7 @@ async def get_holdings(
 
         # KRW conversion for sorting/display: KRW 1:1, USD uses the rate.
         eval_amount_krw = eval_amount * usd_to_krw if currency == "USD" else eval_amount
+        pnl_krw = pnl * usd_to_krw if currency == "USD" else pnl
 
         holdings.append(
             Holding(
@@ -99,6 +104,7 @@ async def get_holdings(
                 evalAmount=float(eval_amount),
                 evalAmountKrw=float(eval_amount_krw),
                 pnl=float(pnl),
+                pnlKrw=float(pnl_krw),
                 pnlRate=float(round(pnl_rate, 2)),
                 currency=currency,
             )
@@ -107,18 +113,31 @@ async def get_holdings(
     # Sort by KRW eval value descending (per API 정의서).
     holdings.sort(key=lambda h: h.evalAmountKrw, reverse=True)
 
-    # Account-level totals come DIRECTLY from Toss's overview (raw, FX-/cost-adjusted
-    # by Toss) — NOT summed/derived by us — so our numbers match the Toss app exactly.
-    mv_krw = _dec(((overview.get("marketValue") or {}).get("amount") or {}).get("krw"))
-    pl = overview.get("profitLoss") or {}
-    pnl_krw_total = _dec((pl.get("amount") or {}).get("krw"))
-    pnl_rate_total = _dec(pl.get("rate")) * Decimal("100")  # Toss gives a fraction
-    purchase_krw = _dec((overview.get("totalPurchaseAmount") or {}).get("krw"))
+    # Account-level totals in KRW. Toss's overview gives per-CURRENCY buckets
+    # (amount.krw = domestic, amount.usd = foreign in USD) with NO combined total,
+    # so we convert the USD bucket at the same Toss FX rate and add it to the KRW
+    # bucket. (`amount` = gross 평가금액, matching the Toss app; `amountAfterCost`
+    # would be net of selling costs.)
+    mv_amount = (overview.get("marketValue") or {}).get("amount") or {}
+    pur_amount = overview.get("totalPurchaseAmount") or {}
+
+    total_value_krw = _dec(mv_amount.get("krw")) + _dec(mv_amount.get("usd")) * usd_to_krw
+    total_purchase_krw = (
+        _dec(pur_amount.get("krw")) + _dec(pur_amount.get("usd")) * usd_to_krw
+    )
+    # PnL derived from the KRW totals so on-screen numbers reconcile (Toss's own
+    # profitLoss.rate is cost-adjusted and would not match value - purchase here).
+    total_pnl_krw = total_value_krw - total_purchase_krw
+    total_pnl_rate = (
+        total_pnl_krw / total_purchase_krw * Decimal("100")
+        if total_purchase_krw
+        else Decimal("0")
+    )
 
     return HoldingsResponse(
-        totalValueKrw=float(mv_krw),
-        totalPnlKrw=float(pnl_krw_total),
-        totalPnlRate=float(round(pnl_rate_total, 2)),
-        totalPurchaseKrw=float(purchase_krw),
+        totalValueKrw=float(total_value_krw),
+        totalPnlKrw=float(total_pnl_krw),
+        totalPnlRate=float(round(total_pnl_rate, 2)),
+        totalPurchaseKrw=float(total_purchase_krw),
         holdings=holdings,
     )
