@@ -70,6 +70,7 @@ export const HoldingSchema = z.object({
   evalAmount: z.number(),
   evalAmountKrw: z.number(),
   pnl: z.number(),
+  pnlKrw: z.number(),
   pnlRate: z.number(),
   currency: CurrencySchema,
 });
@@ -83,3 +84,92 @@ export const HoldingsResponseSchema = z.object({
   holdings: z.array(HoldingSchema),
 });
 export type HoldingsResponse = z.infer<typeof HoldingsResponseSchema>;
+
+/* ---------- 3-A. GET /stocks/{symbol}* (종목 상세) ---------- */
+// Backend types `currency` as a free string on these (Toss raw) — keep it loose
+// here so an unexpected value never fails the whole parse; narrow via asCurrency.
+
+export const PriceLimitsSchema = z.object({
+  upper: z.number().nullable(),
+  lower: z.number().nullable(),
+});
+
+export const FundamentalsSchema = z.object({
+  marketCap: z.number().nullable(),
+  week52High: z.number().nullable(),
+  week52Low: z.number().nullable(),
+  per: z.number().nullable(),
+  pbr: z.number().nullable(),
+  eps: z.number().nullable(),
+  dividendYield: z.number().nullable(), // percent (1.9 = 1.9%)
+});
+
+export const TradingWarningSchema = z.object({
+  type: z.string(),
+  label: z.string(),
+});
+
+export const StockDetailSchema = z.object({
+  symbol: z.string(),
+  name: z.string(),
+  market: MarketSchema,
+  exchange: z.string().nullable(),
+  currency: z.string(),
+  industry: z.string().nullable(),
+  prevClose: z.number().nullable(),
+  priceLimits: PriceLimitsSchema,
+  fundamentals: FundamentalsSchema,
+  warnings: z.array(TradingWarningSchema),
+});
+export type StockDetail = z.infer<typeof StockDetailSchema>;
+export type Fundamentals = z.infer<typeof FundamentalsSchema>;
+export type TradingWarning = z.infer<typeof TradingWarningSchema>;
+
+export const QuoteSchema = z.object({
+  symbol: z.string(),
+  price: z.number(),
+  prevClose: z.number().nullable(),
+  change: z.number().nullable(),
+  changeRate: z.number().nullable(),
+  volume: z.number().nullable(),
+  currency: z.string(),
+  krwPrice: z.number().nullable(), // US only
+});
+export type Quote = z.infer<typeof QuoteSchema>;
+
+export const ChartPointSchema = z.object({
+  t: z.string(),
+  close: z.number(),
+  volume: z.number(),
+});
+export const ChartResponseSchema = z.object({
+  range: z.string(),
+  currency: z.string(),
+  points: z.array(ChartPointSchema),
+  periodReturn: z.number().nullable(),
+});
+export type ChartResponse = z.infer<typeof ChartResponseSchema>;
+
+export const OrderbookLevelSchema = z.object({
+  price: z.number(),
+  volume: z.number(),
+});
+export const OrderbookSchema = z.object({
+  asks: z.array(OrderbookLevelSchema),
+  bids: z.array(OrderbookLevelSchema),
+  currency: z.string().nullable(),
+});
+export type Orderbook = z.infer<typeof OrderbookSchema>;
+export type OrderbookLevel = z.infer<typeof OrderbookLevelSchema>;
+
+export const TradeSchema = z.object({
+  time: z.string(),
+  price: z.number(),
+  volume: z.number(),
+});
+export const TradesResponseSchema = z.object({
+  trades: z.array(TradeSchema),
+  currency: z.string().nullable(),
+});
+export type TradesResponse = z.infer<typeof TradesResponseSchema>;
+export type Trade = z.infer<typeof TradeSchema>;
