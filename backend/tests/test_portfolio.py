@@ -79,7 +79,7 @@ _RATE = {"baseCurrency": "USD", "quoteCurrency": "KRW", "rate": "1380"}
 
 
 @pytest.mark.asyncio
-async def test_holdings_service_assembles_and_converts(monkeypatch):
+async def test_holdings_service_domestic_only(monkeypatch):
     async def fake_get_credentials(session):
         class _Creds:
             toss_app_key_enc = "x"
@@ -93,28 +93,22 @@ async def test_holdings_service_assembles_and_converts(monkeypatch):
     mock = _MockTossPortfolio(_OVERVIEW, _PRICES, _RATE)
     resp = await pf_service.get_holdings(session=object(), client=mock)
 
-    # USD eval 975 * 1380 = 1,345,500 KRW.
-    by_symbol = {h.symbol: h for h in resp.holdings}
-    assert by_symbol["005930"].evalAmountKrw == pytest.approx(720000)
-    assert by_symbol["AAPL"].evalAmountKrw == pytest.approx(975.0 * 1380)
-    assert by_symbol["AAPL"].currency == "USD"
-    assert by_symbol["AAPL"].pnlRate == pytest.approx(8.33)
+    # 해외(US, AAPL)는 제외되고 국내(KR)만 남는다.
+    symbols = [h.symbol for h in resp.holdings]
+    assert symbols == ["005930"]
+    s = resp.holdings[0]
+    assert s.currency == "KRW"
+    assert s.evalAmountKrw == pytest.approx(720000)
+    assert s.pnl == pytest.approx(20000)
+    assert s.pnlKrw == pytest.approx(20000)  # KR이라 pnl과 동일
+    assert s.pnlRate == pytest.approx(2.86)
 
-    # pnlKrw: KR pnl stays as-is; US pnl (75 USD) converts at the rate (1380).
-    assert by_symbol["005930"].pnlKrw == pytest.approx(20000)
-    assert by_symbol["AAPL"].pnlKrw == pytest.approx(75.0 * 1380)
-
-    # Totals = Toss KRW bucket + USD bucket converted at the rate (1380):
-    #   value:    7,200,000 + 1100*1380 = 8,718,000
-    #   purchase: 6,500,000 + 1000*1380 = 7,880,000
-    #   pnl:      8,718,000 - 7,880,000 = 838,000  ->  838000/7880000 = 10.63%
-    assert resp.totalValueKrw == pytest.approx(8_718_000)
-    assert resp.totalPurchaseKrw == pytest.approx(7_880_000)
-    assert resp.totalPnlKrw == pytest.approx(838_000)
-    assert resp.totalPnlRate == pytest.approx(10.63)
-
-    # Sorted by evalAmountKrw descending (AAPL ~1.35M > Samsung 720k).
-    assert resp.holdings[0].symbol == "AAPL"
+    # 총계도 국내(원화) 버킷만: value 7,200,000 / purchase 6,500,000 /
+    #   pnl 700,000 -> 700000/6500000 = 10.77%
+    assert resp.totalValueKrw == pytest.approx(7_200_000)
+    assert resp.totalPurchaseKrw == pytest.approx(6_500_000)
+    assert resp.totalPnlKrw == pytest.approx(700_000)
+    assert resp.totalPnlRate == pytest.approx(10.77)
 
 
 @pytest.mark.asyncio
