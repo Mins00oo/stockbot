@@ -5,3 +5,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+
+# 로컬 Windows 실행 스크립트 (local launcher, not shared)
+백엔드_실행.bat
