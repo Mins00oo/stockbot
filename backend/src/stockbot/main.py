@@ -16,6 +16,7 @@ from stockbot.core.logging import setup_logging
 from stockbot.domain.auth.router import router as auth_router
 from stockbot.domain.health.router import router as health_router
 from stockbot.domain.portfolio.router import router as portfolio_router
+from stockbot.domain.stocks.router import router as stocks_router
 
 # Windows only: psycopg's async mode can't run on the default ProactorEventLoop,
 # so force the SelectorEventLoop before uvicorn creates the loop. (Set at import
@@ -36,6 +37,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(auth_router)
     app.include_router(portfolio_router)
+    app.include_router(stocks_router)
 
     return app
 

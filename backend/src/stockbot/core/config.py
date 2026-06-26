@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     database_url: str
     toss_key_enc_key: str
     toss_base_url: str = "https://openapi.tossinvest.com"
+    # US fundamentals (PER/PBR/EPS/dividend yield). Empty = skip US fundamentals
+    # gracefully (the detail screen still renders price/chart/holding).
+    finnhub_api_key: str = ""
+    finnhub_base_url: str = "https://finnhub.io/api/v1"
 
     model_config = SettingsConfigDict(
         env_file=".env",
