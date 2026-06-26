@@ -2,7 +2,7 @@
 
 `.env` 파일은 **비밀·환경 설정**을 담음. **git에 안 올라감**(.gitignore). `.env.example`을 복사해서 값을 채운다.
 
-## .env 항목 (4개)
+## .env 항목 (5개)
 
 | 키 | 예시/형식 | 설명 |
 |---|---|---|
@@ -10,6 +10,7 @@
 | `PAIRING_KEY` | (긴 랜덤 문자열) | **앱 ↔ 백엔드 인증용 비밀.** 내가 정함. 앱 온보딩 1단계에도 **같은 값** 입력 |
 | `TOSS_KEY_ENC_KEY` | (Fernet 키) | 토스 키를 **암호화**해 DB에 저장할 때 쓰는 키 |
 | `TOSS_BASE_URL` | `https://openapi.tossinvest.com` | 토스 API 주소 |
+| `FINNHUB_API_KEY` | (Finnhub 무료 키) | **US 종목 펀더멘털**(PER/PBR/EPS/배당) 조회용. finnhub.io 무료 발급. **선택** — 비우면 US 펀더멘털만 생략(차트·시세·KR 정상). KR 시총은 토스로 계산해 불필요 |
 
 ## 값 만드는 법 (둘 다 *직접 타이핑하지 말고 명령으로 생성*)
 
@@ -35,7 +36,7 @@ uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_
 ## ⚠️ 중요: 토스 App/Secret 키는 .env에 넣지 않음
 - 토스 **App Key / Secret Key**는 `.env`에 **안 들어가.**
 - → **앱 온보딩 2단계에서 입력** → 백엔드가 받아서 **암호화 후 DB에 저장**.
-- `.env`엔 위 **4개만**.
+- `.env`엔 위 **5개만**(FINNHUB는 선택).
 
 ## .env.example (커밋되는 템플릿) 예시
 ```
@@ -43,4 +44,5 @@ DATABASE_URL=postgresql+psycopg://stockbot:stockbot@localhost:5432/stockbot
 PAIRING_KEY=
 TOSS_KEY_ENC_KEY=
 TOSS_BASE_URL=https://openapi.tossinvest.com
+FINNHUB_API_KEY=
 ```

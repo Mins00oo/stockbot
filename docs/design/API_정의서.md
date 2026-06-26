@@ -120,8 +120,43 @@
 
 ---
 
+## 3-A. 종목 상세 화면 엔드포인트 (stocks)
+
+> 토스 시세 + (US) Finnhub 펀더멘털. `market`(KR/US) 미지정 시 symbol로 추론(6자리=KR). 모두 `X-Pairing-Key` 필수. 비보유 종목도 동작(보유 현황은 `/portfolio/holdings`에서 별도 조합).
+
+### ⑤ `GET /stocks/{symbol}` — 종목 상세(정보·펀더멘털) · *진입 시 1회*
+- 쿼리: `market`(선택 `KR|US`)
+- **200**:
+  ```json
+  { "symbol":"005930","name":"삼성전자","market":"KR","exchange":"KOSPI","currency":"KRW",
+    "industry":null,"prevClose":71000,
+    "priceLimits":{"upper":92300,"lower":49700},
+    "fundamentals":{"marketCap":4.25e14,"week52High":88800,"week52Low":64500,
+      "per":null,"pbr":null,"eps":null,"dividendYield":null},
+    "warnings":[{"type":"OVERHEATED","label":"단기과열"}] }
+  ```
+  - **시가총액 = 현재가 × 상장주식수**(토스). **KR**: per/pbr/eps/dividendYield=`null`(거래경고 있을 수 있음). **US**: 펀더멘털·`industry` 채워짐(Finnhub), warnings=`[]`.
+  - 상하한: KR=토스 제공 / **US=전일종가 ±10% 참고밴드(계산)**.
+- 에러: **409** `NOT_CONNECTED` · **401** `UNAUTHORIZED` · **502** `TOSS_UNAVAILABLE`
+
+### ⑥ `GET /stocks/{symbol}/quote` — 실시간 시세 · *2초 폴링*
+- 쿼리: `market`(선택) · **200**: `{ "symbol","price","prevClose","change","changeRate","volume","currency","krwPrice" }` (`krwPrice`=US만, 그 외 `null`)
+
+### ⑦ `GET /stocks/{symbol}/chart?range=1D|1W|1M|3M|1Y` — 차트 · *기본 3M*
+- **200**: `{ "range":"3M","currency":"KRW","points":[{"t","close","volume"}],"periodReturn":12.83 }`
+  - `1D`=분봉, 나머지=일봉(주봉/월봉 없음). `periodReturn`=기간 시작가 대비 %.
+
+### ⑧ `GET /stocks/{symbol}/orderbook` — 10단계 호가
+- **200**: `{ "asks":[{"price","volume"}],"bids":[{"price","volume"}],"currency" }` (asks=매도·bids=매수)
+
+### ⑨ `GET /stocks/{symbol}/trades` — 최근 체결
+- **200**: `{ "trades":[{"time","price","volume"}],"currency" }` — ⚠️ 토스가 매수/매도 side 미제공(방향 표시 불가).
+
+---
+
 ## 4. 범위
-- **오늘**: 위 5개 (health · pairing/verify · toss/connect · auth/status · portfolio/holdings)
+- **오늘(키연결→홈)**: health · pairing/verify · toss/connect · auth/status · portfolio/holdings (5개)
+- **종목 상세**: stocks 5개 (detail · quote · chart · orderbook · trades)
 - **나중**: stocks(검색) · market(시세·급변) · news · analysis · alerts · reports · calendar · chat 등 도메인 엔드포인트 추가 시 이 문서에 이어 작성.
 
 ## 5. 연동 메모

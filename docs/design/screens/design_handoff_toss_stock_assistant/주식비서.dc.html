@@ -309,64 +309,92 @@
               <div style="padding:14px 22px 0;">
                 <div style="display:flex; align-items:center; gap:12px;">
                   <div style="width:46px; height:46px; border-radius:14px; background:{{ stock.logoBg }}; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; font-weight:800;">{{ stock.logoText }}</div>
-                  <div><div style="font-size:13px; color:#8B95A1; font-weight:600;">{{ stock.market }} · {{ stock.ticker }}</div><div style="font-size:18px; font-weight:800; color:#191F28; margin-top:1px;">{{ stock.name }}</div></div>
+                  <div style="flex:1;"><div style="font-size:13px; color:#8B95A1; font-weight:600;">{{ stock.flag }} {{ stock.market }} · {{ stock.ticker }}</div><div style="font-size:18px; font-weight:800; color:#191F28; margin-top:1px;">{{ stock.name }}</div></div>
                 </div>
                 <div style="margin-top:18px; font-size:32px; font-weight:800; color:#191F28; letter-spacing:-1px;">{{ stock.priceStr }}</div>
-                <div style="margin-top:6px;">{{ stock.changeEl }}</div>
+                <div style="margin-top:6px; display:flex; align-items:center; gap:10px;">{{ stock.changeEl }}<sc-if value="{{ stock.isUS }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px; color:#B0B8C1; font-weight:600;">{{ stock.krwConv }}</span></sc-if></div>
               </div>
 
-              <div style="margin:18px 22px 0; height:120px; position:relative;">{{ stock.chart }}</div>
+              <!-- 거래량 · 상/하한가 strip -->
+              <div style="margin:18px 20px 0; background:#fff; border-radius:16px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex;">
+                <div style="flex:1; padding:14px 0; text-align:center;"><div style="font-size:11.5px; color:#8B95A1; font-weight:600;">거래량</div><div style="font-size:14px; font-weight:700; color:#191F28; margin-top:3px;">{{ stock.volStr }}</div></div>
+                <div style="width:1px; background:#F2F4F6; margin:10px 0;"></div>
+                <div style="flex:1; padding:14px 0; text-align:center;"><div style="font-size:11.5px; color:#8B95A1; font-weight:600;">상한가</div><div style="font-size:14px; font-weight:700; color:#F04452; margin-top:3px;">{{ stock.limUp }}</div></div>
+                <div style="width:1px; background:#F2F4F6; margin:10px 0;"></div>
+                <div style="flex:1; padding:14px 0; text-align:center;"><div style="font-size:11.5px; color:#8B95A1; font-weight:600;">하한가</div><div style="font-size:14px; font-weight:700; color:#3182F6; margin-top:3px;">{{ stock.limDown }}</div></div>
+              </div>
 
+              <!-- 거래경고 (KR only) -->
+              <sc-if value="{{ stock.hasWarn }}" hint-placeholder-val="{{ false }}">
+                <div style="margin:14px 20px 0; display:flex; flex-direction:column; gap:8px;">
+                  <sc-for list="{{ stock.warns }}" as="w" hint-placeholder-count="1">
+                    <div style="background:{{ w.meta.bg }}; border-radius:14px; padding:14px 16px; display:flex; gap:11px; align-items:flex-start;">
+                      <div style="font-size:15px; line-height:1.2;">⚠️</div>
+                      <div style="flex:1;"><div style="font-size:13.5px; font-weight:800; color:{{ w.meta.c }};">거래경고 · {{ w.label }}</div><div style="font-size:12.5px; color:#4E5968; line-height:1.5; margin-top:3px; letter-spacing:-0.2px;">{{ w.meta.desc }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <!-- 차트 -->
+              <div style="margin:16px 20px 0; background:#fff; border-radius:18px; padding:18px 18px 16px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                  <div style="font-size:14px; font-weight:800; color:#191F28;">차트</div>
+                  {{ stock.periodReturnEl }}
+                </div>
+                <div style="height:128px; position:relative; margin-top:6px;">{{ stock.priceChart }}</div>
+                <div style="height:38px; margin-top:4px;">{{ stock.volumeChart }}</div>
+                <div style="display:flex; gap:6px; margin-top:14px; background:#F8F9FB; border-radius:12px; padding:4px;">
+                  <sc-for list="{{ periods }}" as="p" hint-placeholder-count="5">
+                    <div onClick="{{ p.pick }}" style="flex:1; text-align:center; padding:11px 0; border-radius:9px; font-size:13px; font-weight:{{ p.weight }}; cursor:pointer; background:{{ p.bg }}; color:{{ p.color }};">{{ p.label }}</div>
+                  </sc-for>
+                </div>
+                <div style="font-size:11px; color:#B0B8C1; margin-top:10px; text-align:center;">1일·1주·1달·3달·1년 · 실시간 스트리밍은 제공되지 않아요</div>
+              </div>
+
+              <!-- 호가 / 체결 -->
+              <div style="margin:16px 20px 0; background:#fff; border-radius:18px; padding:18px 0 14px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:0 18px 14px;">
+                  <div style="font-size:14px; font-weight:800; color:#191F28;">{{ bookTitle }}</div>
+                  {{ bookTabs }}
+                </div>
+                <sc-if value="{{ isBookOB }}" hint-placeholder-val="{{ true }}">{{ stock.orderBook }}</sc-if>
+                <sc-if value="{{ isBookTr }}" hint-placeholder-val="{{ false }}">{{ stock.trades }}</sc-if>
+                <div style="font-size:11px; color:#B0B8C1; margin-top:12px; padding:0 18px; text-align:center;">10단계 호가 · 최근 체결 스냅샷</div>
+              </div>
+
+              <!-- 내 보유 현황 -->
               <sc-if value="{{ stock.isHeld }}" hint-placeholder-val="{{ true }}">
-                <div style="margin:18px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
+                <div style="margin:16px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
                   <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:14px;">내 보유 현황</div>
-                  <div style="display:flex; flex-direction:column; gap:11px;">
-                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">보유 수량</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.qtyStr }}</span></div>
-                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">평균 단가</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.avgStr }}</span></div>
-                    <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">평가금액</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ stock.evalStr }}</span></div>
-                    <div style="height:1px; background:#F2F4F6;"></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:14px; color:#6B7684;">평가손익</span>{{ stock.gainEl }}</div>
+                  <div style="display:flex; flex-direction:column; gap:13px;">
+                    <sc-for list="{{ stock.holdRows }}" as="r" hint-placeholder-count="6">
+                      <div style="display:flex; justify-content:space-between; align-items:flex-start;"><span style="font-size:14px; color:#6B7684; padding-top:1px;">{{ r.label }}</span>{{ r.el }}</div>
+                    </sc-for>
                   </div>
                 </div>
               </sc-if>
 
+              <!-- 종목 정보 -->
               <div style="margin:16px 20px 0; background:#fff; border-radius:18px; padding:18px 20px; box-shadow:0 2px 10px rgba(0,0,0,.04);">
                 <div style="font-size:14px; font-weight:800; color:#191F28; margin-bottom:14px;">종목 정보</div>
                 <div style="display:flex; flex-direction:column; gap:11px;">
-                  <sc-for list="{{ stock.stats }}" as="r" hint-placeholder-count="4">
+                  <sc-for list="{{ stock.infoRows }}" as="r" hint-placeholder-count="3">
                     <div style="display:flex; justify-content:space-between;"><span style="font-size:14px; color:#6B7684;">{{ r.label }}</span><span style="font-size:14px; font-weight:700; color:#191F28;">{{ r.value }}</span></div>
                   </sc-for>
                 </div>
                 <div style="margin-top:16px; padding-top:16px; border-top:1px solid #F2F4F6; font-size:13.5px; color:#6B7684; line-height:1.6; letter-spacing:-0.2px;">{{ stock.about }}</div>
               </div>
 
-              <div style="margin:16px 20px 0;" onClick="{{ stock.openReport }}">
-                <div style="background:#fff; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:12px; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.04);">
-                  <div style="width:38px; height:38px; flex:none; border-radius:11px; background:#F1ECFF; display:flex; align-items:center; justify-content:center; font-size:18px;">📄</div>
-                  <div style="flex:1;"><div style="font-size:14px; font-weight:700; color:#191F28;">이 종목 AI 리포트</div><div style="font-size:12px; color:#8B95A1; margin-top:1px;">{{ stock.reportTeaser }}</div></div>
-                  <div style="color:#C4CCD4; font-size:18px;">›</div>
-                </div>
-              </div>
-
+              <!-- 예정 일정 -->
               <sc-if value="{{ stock.hasEvent }}" hint-placeholder-val="{{ false }}">
-                <div style="margin:12px 20px 0; background:#fff; border-radius:16px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; align-items:center; gap:12px;">
+                <div onClick="{{ goCalendar }}" style="margin:12px 20px 0; background:#fff; border-radius:16px; padding:16px 18px; box-shadow:0 2px 10px rgba(0,0,0,.04); display:flex; align-items:center; gap:12px; cursor:pointer;">
                   <div style="width:38px; height:38px; flex:none; border-radius:11px; background:#E6F7F0; display:flex; align-items:center; justify-content:center; font-size:18px;">📅</div>
                   <div style="flex:1;"><div style="font-size:14px; font-weight:700; color:#191F28;">예정된 일정</div><div style="font-size:12px; color:#8B95A1; margin-top:1px;">{{ stock.eventText }}</div></div>
+                  <div style="color:#C4CCD4; font-size:18px;">›</div>
                 </div>
               </sc-if>
 
-              <div style="margin:16px 20px 0;" onClick="{{ goAI }}">
-                <div style="background:#F1ECFF; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:12px; cursor:pointer;">
-                  <div style="font-size:20px;">🤖</div>
-                  <div style="flex:1; font-size:14px; font-weight:700; color:#7C3AED; letter-spacing:-0.2px;">이 종목이 내 포트폴리오에 미치는 영향 보기</div>
-                  <div style="color:#7C3AED; font-size:18px;">›</div>
-                </div>
-              </div>
-
-              <div style="position:absolute; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #F2F4F6; padding:14px 20px 26px; display:flex; gap:10px;">
-                <div onClick="{{ stock.toggleWatch }}" style="flex:none; width:54px; height:52px; border-radius:14px; background:#F2F4F6; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ stock.starElBig }}</div>
-                <div style="flex:1; height:52px; border-radius:14px; background:#3182F6; color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;">매수하기</div>
-              </div>
             </div>
           </sc-if>
 
@@ -691,6 +719,14 @@
 
         </div>
 
+        <!-- ===== DETAIL ACTION BAR (pinned to frame bottom) ===== -->
+        <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #F2F4F6; padding:14px 20px 26px; display:flex; gap:10px; z-index:25;">
+            <div onClick="{{ stock.toggleWatch }}" style="flex:none; width:54px; height:52px; border-radius:14px; background:#F2F4F6; display:flex; align-items:center; justify-content:center; cursor:pointer;">{{ stock.starElBig }}</div>
+            <div style="flex:1; height:52px; border-radius:14px; background:#3182F6; color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;">매수하기</div>
+          </div>
+        </sc-if>
+
         <!-- ===== TAB BAR ===== -->
         <sc-if value="{{ showTab }}" hint-placeholder-val="{{ true }}">
           <div style="flex:none; background:#fff; border-top:1px solid #F2F4F6; padding:8px 0 26px; display:flex;">
@@ -742,6 +778,7 @@ class Component extends DCLogic {
     reportPeriod: '일간',
     reportStockId: null,
     calY: 2026, calM: 5, calSel: 24, calFilter: '전체',
+    detailPeriod: '3달', bookTab: '호가',
   };
 
   rate = 1380;
@@ -801,6 +838,175 @@ class Component extends DCLogic {
   bigNum(t, up) { return React.createElement('span', { style: { color: up ? '#F04452' : '#3182F6', fontWeight: 700, fontSize: '15px' } }, t); }
   star(on, size) { return React.createElement('span', { style: { fontSize: (size || 20) + 'px', color: on ? '#FFB400' : '#C4CCD4', lineHeight: 1 } }, on ? '★' : '☆'); }
   marketGroup(s) { return s.market === 'KOSPI' ? '코스피' : s.market === 'KOSDAQ' ? '코스닥' : '미국'; }
+  country(s) { return (s.market === 'KOSPI' || s.market === 'KOSDAQ') ? 'KR' : 'US'; }
+  flag(s) { return this.country(s) === 'KR' ? '🇰🇷' : '🇺🇸'; }
+
+  usFund(id) {
+    return ({
+      NVDA: { pbr: '57.8', eps: '$2.10' }, AAPL: { pbr: '51.2', eps: '$6.47' }, TSLA: { pbr: '14.3', eps: '$3.50' },
+      PLTR: { pbr: '28.4', eps: '$0.20' }, META: { pbr: '9.1', eps: '$19.81' }, MSFT: { pbr: '13.4', eps: '$12.46' }, AMD: { pbr: '5.2', eps: '$3.42' },
+    })[id] || { pbr: '—', eps: '—' };
+  }
+  warnMap(id) {
+    return ({ '277810': ['단기과열'], '196170': ['투자주의'] })[id] || [];
+  }
+  warnMeta(label) {
+    return ({
+      '단기과열': { c: '#E8590C', bg: '#FFF0E6', desc: '단기 급등으로 단기과열 종목으로 지정됐어요. 익일 단일가매매가 적용될 수 있어요.' },
+      '투자주의': { c: '#F08C00', bg: '#FFF9DB', desc: '투기적이거나 불공정거래 개연성이 있어 투자에 유의가 필요해요.' },
+      '투자경고': { c: '#E8590C', bg: '#FFF0E6', desc: '추가로 상승하면 매매가 정지될 수 있어요.' },
+      '투자위험': { c: '#F03E3E', bg: '#FFE3E3', desc: '투자위험 종목으로 지정됐어요. 신용·미수 거래가 제한돼요.' },
+      'VI발동': { c: '#1098AD', bg: '#E3FAFC', desc: '변동성 완화장치(VI)가 발동됐어요.' },
+    })[label] || { c: '#868E96', bg: '#F1F3F5', desc: '거래 유의 종목이에요.' };
+  }
+
+  tickSize(price, cur) {
+    if (cur === '$') return 0.01;
+    if (price < 2000) return 1;
+    if (price < 5000) return 5;
+    if (price < 20000) return 10;
+    if (price < 50000) return 50;
+    if (price < 200000) return 100;
+    if (price < 500000) return 500;
+    return 1000;
+  }
+  hashSeed(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  rng(seed) { let s = seed >>> 0; return function () { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  qStr(n) { return n.toLocaleString('en-US'); }
+  volStr(s) {
+    const r = this.rng(this.hashSeed(s.id + 'v'));
+    const base = s.cur === '$' ? 12000000 + r() * 40000000 : (s.price < 50000 ? 6000000 + r() * 14000000 : 600000 + r() * 3000000);
+    const v = Math.round(base);
+    return this.qStr(v) + '주';
+  }
+
+  prevClose(s) { return s.price - s.abs; }
+  limitStrs(s) {
+    const pc = this.prevClose(s), tick = this.tickSize(s.price, s.cur);
+    const band = this.country(s) === 'KR' ? 0.30 : 0.10; // KR ±30%, US 대표 변동성 밴드(LULD)
+    const snap = (x) => s.cur === '$' ? x : Math.round(x / tick) * tick;
+    return { up: this.money(s.cur, snap(pc * (1 + band))), down: this.money(s.cur, snap(pc * (1 - band))), band: this.country(s) === 'KR' ? '±30%' : '참고' };
+  }
+
+  orderBookEl(s) {
+    const tick = this.tickSize(s.price, s.cur);
+    const pc = this.prevClose(s);
+    const snap = s.cur === '$' ? Math.round(s.price / tick) * tick : Math.round(s.price / tick) * tick;
+    const r = this.rng(this.hashSeed(s.id + 'ob'));
+    const qBase = s.cur === '$' ? 60 + r() * 600 : (s.price < 20000 ? 4000 + r() * 12000 : s.price < 100000 ? 600 + r() * 3000 : 120 + r() * 700);
+    const mkQ = () => Math.round(qBase * (0.35 + r() * 1.3));
+    const asks = [], bids = [];
+    let maxQ = 1;
+    for (let i = 1; i <= 10; i++) { const q = mkQ(); asks.push({ p: snap + tick * i, q }); maxQ = Math.max(maxQ, q); }
+    for (let i = 0; i <= 9; i++) { const q = mkQ(); bids.push({ p: snap - tick * i, q }); maxQ = Math.max(maxQ, q); }
+    const priceColor = (p) => p > pc ? '#F04452' : p < pc ? '#3182F6' : '#333D4B';
+    const pctOf = (p) => ((p - pc) / pc * 100);
+    const row = (lvl, side, key) => {
+      const pct = pctOf(lvl.p);
+      const barW = Math.max(4, Math.round(lvl.q / maxQ * 100));
+      const isAsk = side === 'ask';
+      const qtyCell = React.createElement('div', { style: { position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: isAsk ? 'flex-end' : 'flex-start', padding: '0 12px' } },
+        React.createElement('div', { key: 'bar', style: { position: 'absolute', top: '6px', bottom: '6px', [isAsk ? 'right' : 'left']: 0, width: barW + '%', background: isAsk ? '#E7F0FF' : '#FFE9EC', borderRadius: '4px' } }),
+        React.createElement('div', { key: 'n', style: { position: 'relative', fontSize: '12px', fontWeight: 600, color: isAsk ? '#3182F6' : '#F04452' } }, this.qStr(lvl.q)));
+      const priceCell = React.createElement('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#F8F9FB' } },
+        React.createElement('div', { key: 'p', style: { fontSize: '13px', fontWeight: 700, color: priceColor(lvl.p), lineHeight: 1.05 } }, this.money(s.cur, lvl.p)),
+        React.createElement('div', { key: 'c', style: { fontSize: '9.5px', fontWeight: 600, color: priceColor(lvl.p), opacity: 0.75 } }, (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'));
+      return React.createElement('div', { key: key, style: { display: 'grid', gridTemplateColumns: '1fr 96px 1fr', height: '30px' } },
+        isAsk ? qtyCell : React.createElement('div', { key: 'e' }), priceCell, isAsk ? React.createElement('div', { key: 'e2' }) : qtyCell);
+    };
+    const rows = [];
+    for (let i = asks.length - 1; i >= 0; i--) rows.push(row(asks[i], 'ask', 'a' + i));
+    for (let i = 0; i < bids.length; i++) rows.push(row(bids[i], 'bid', 'b' + i));
+    return React.createElement('div', { style: {} },
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 96px 1fr', padding: '0 12px 8px', fontSize: '11px', fontWeight: 700, color: '#8B95A1' } },
+        React.createElement('div', { key: 0, style: { textAlign: 'right' } }, '매도 잔량'),
+        React.createElement('div', { key: 1, style: { textAlign: 'center' } }, '호가'),
+        React.createElement('div', { key: 2 }, '매수 잔량')),
+      rows);
+  }
+
+  tradesEl(s) {
+    const tick = this.tickSize(s.price, s.cur);
+    const pc = this.prevClose(s);
+    const snap = Math.round(s.price / tick) * tick;
+    const r = this.rng(this.hashSeed(s.id + 'tr'));
+    let h = 15, mi = 21, se = 38; // 한국 기준 장중 스냅샷
+    if (this.country(s) === 'US') { h = 11; mi = 47; se = 12; }
+    const rows = [];
+    for (let i = 0; i < 14; i++) {
+      const off = Math.round(r() * 6) - 3;
+      const p = snap + tick * off;
+      const q = Math.round((s.cur === '$' ? 4 + r() * 90 : 10 + r() * 600));
+      const buy = r() > 0.46;
+      const col = p > pc ? '#F04452' : p < pc ? '#3182F6' : '#333D4B';
+      const t = String(h).padStart(2, '0') + ':' + String(mi).padStart(2, '0') + ':' + String(se).padStart(2, '0');
+      se -= Math.round(1 + r() * 5); if (se < 0) { se += 60; mi -= 1; } if (mi < 0) { mi += 60; h -= 1; }
+      rows.push(React.createElement('div', { key: i, style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '9px 14px', borderTop: i ? '1px solid #F4F5F7' : 'none', alignItems: 'center' } },
+        React.createElement('div', { key: 't', style: { fontSize: '12.5px', color: '#8B95A1' } }, t),
+        React.createElement('div', { key: 'p', style: { fontSize: '13px', fontWeight: 700, color: col, textAlign: 'center' } }, this.money(s.cur, p)),
+        React.createElement('div', { key: 'q', style: { fontSize: '12.5px', fontWeight: 600, color: buy ? '#F04452' : '#3182F6', textAlign: 'right' } }, (buy ? '▲' : '▼') + ' ' + this.qStr(q))));
+    }
+    return React.createElement('div', { style: {} },
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '0 14px 8px', fontSize: '11px', fontWeight: 700, color: '#8B95A1' } },
+        React.createElement('div', { key: 0 }, '체결시각'),
+        React.createElement('div', { key: 1, style: { textAlign: 'center' } }, '체결가'),
+        React.createElement('div', { key: 2, style: { textAlign: 'right' } }, '체결량')),
+      rows);
+  }
+
+  periods() { return ['1일', '1주', '1달', '3달', '1년']; }
+  periodReturn(s, period) {
+    if (period === '1일') return s.pct;
+    const r = this.rng(this.hashSeed(s.id + period + 'ret'));
+    const amp = { '1주': 9, '1달': 17, '3달': 32, '1년': 72 }[period] || 12;
+    const dir = s.pct >= 0 ? 0.58 : 0.42; // 일간 방향으로 살짝 편향
+    return Math.round((r() - (1 - dir)) * amp * 100) / 100;
+  }
+  priceChartEl(s, period, ret) {
+    const up = ret >= 0;
+    const color = up ? '#F04452' : '#3182F6';
+    const r = this.rng(this.hashSeed(s.id + period));
+    const n = { '1일': 48, '1주': 38, '1달': 34, '3달': 44, '1년': 58 }[period] || 40;
+    const amp = { '1일': 12, '1주': 13, '1달': 12, '3달': 10, '1년': 8 }[period] || 12;
+    const pts = [];
+    let y = up ? 84 : 28;
+    const drift = (up ? -1 : 1) * (58 / (n - 1));
+    for (let i = 0; i < n; i++) {
+      y += (r() - 0.5) * amp + drift;
+      y = Math.max(14, Math.min(96, y));
+      pts.push([Math.round(i / (n - 1) * 330), Math.round(y)]);
+    }
+    pts[0][1] = up ? 86 : 26;
+    pts[n - 1][1] = up ? 20 : 94;
+    const poly = pts.map(p => p[0] + ',' + p[1]).join(' ');
+    return React.createElement('svg', { viewBox: '0 0 330 110', preserveAspectRatio: 'none', style: { width: '100%', height: '100%' } },
+      React.createElement('defs', { key: 'd' }, React.createElement('linearGradient', { id: 'pc' + (up ? 'u' : 'd'), x1: 0, y1: 0, x2: 0, y2: 1 },
+        React.createElement('stop', { key: 0, offset: 0, stopColor: color, stopOpacity: 0.18 }),
+        React.createElement('stop', { key: 1, offset: 1, stopColor: color, stopOpacity: 0 }))),
+      React.createElement('polyline', { key: 'a', points: poly + ' 330,110 0,110', fill: 'url(#pc' + (up ? 'u' : 'd') + ')', stroke: 'none' }),
+      React.createElement('polyline', { key: 'l', points: poly, fill: 'none', stroke: color, strokeWidth: 2, strokeLinejoin: 'round', strokeLinecap: 'round' }));
+  }
+  volumeBarsEl(s, period) {
+    const r = this.rng(this.hashSeed(s.id + period + 'vol'));
+    const bars = [];
+    const n = { '1일': 48, '1주': 38, '1달': 34, '3달': 44, '1년': 58 }[period] || 40;
+    for (let i = 0; i < n; i++) {
+      const hgt = 8 + r() * 28;
+      const reddish = r() > 0.5;
+      bars.push(React.createElement('div', { key: i, style: { flex: 1, height: hgt + '%', alignSelf: 'flex-end', background: reddish ? '#FAD4D8' : '#CFE0FB', borderRadius: '1px' } }));
+    }
+    return React.createElement('div', { style: { display: 'flex', alignItems: 'flex-end', gap: '1px', height: '100%' } }, bars);
+  }
+
+  marketGroup2() {}
+
+  segToggle(opts, active, onPick) {
+    return React.createElement('div', { style: { display: 'inline-flex', background: '#F2F4F6', borderRadius: '10px', padding: '3px' } },
+      opts.map((o, i) => {
+        const on = o === active;
+        return React.createElement('div', { key: i, onClick: () => onPick(o), style: { padding: '7px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', background: on ? '#fff' : 'transparent', color: on ? '#191F28' : '#8B95A1', boxShadow: on ? '0 1px 3px rgba(0,0,0,.1)' : 'none' } }, o);
+      }));
+  }
 
   get(id) { return this.master().find(s => s.id === id); }
   go(to) { this.setState({ screen: to, stack: [] }); }
@@ -947,27 +1153,62 @@ class Component extends DCLogic {
     if (sel) {
       const up = sel.pct >= 0;
       const inW = wset.includes(sel.id);
+      const isUS = this.country(sel) === 'US';
       const g = (sel.price - sel.avg) * sel.qty;
       const gp = sel.avg ? ((sel.price - sel.avg) / sel.avg) * 100 : 0;
       const gup = g >= 0;
+      const dayG = sel.abs * sel.qty;
+      const dup = dayG >= 0;
+      const evalLocal = sel.price * sel.qty;
+      const fee = isUS ? evalLocal * 0.0007 : evalLocal * 0.00015;
       var selEv = this.calEvents().find(e => e.stockId === sel.id);
+      const lim = this.limitStrs(sel);
+      const period = this.state.detailPeriod;
+      const pret = this.periodReturn(sel, period);
+      const pup = pret >= 0;
+
+      // holding rows (dual currency for US)
+      const dual = (local) => isUS ? ('₩' + this.fmt(local * this.rate)) : null;
+      const valueCell = (mainStr, subStr, color) => React.createElement('div', { style: { textAlign: 'right' } },
+        React.createElement('div', { key: 'm', style: { fontSize: '14px', fontWeight: 700, color: color || '#191F28' } }, mainStr),
+        subStr ? React.createElement('div', { key: 's', style: { fontSize: '12px', fontWeight: 600, color: '#8B95A1', marginTop: '1px' } }, subStr) : null);
+      const holdRows = [
+        { label: '보유 수량', el: valueCell(sel.qty + '주', null, null) },
+        { label: '평균 단가', el: valueCell(this.money(sel.cur, sel.avg), null, null) },
+        { label: '평가금액', el: valueCell(this.money(sel.cur, evalLocal), dual(evalLocal), null) },
+        { label: '평가손익', el: valueCell((gup ? '+' : '') + this.money(sel.cur, g) + '  (' + (gup ? '+' : '') + gp.toFixed(2) + '%)', isUS ? ((gup ? '+' : '') + '₩' + this.fmt(g * this.rate)) : null, gup ? '#F04452' : '#3182F6') },
+        { label: '일간 손익', el: valueCell((dup ? '+' : '') + this.money(sel.cur, dayG), isUS ? ((dup ? '+' : '') + '₩' + this.fmt(dayG * this.rate)) : null, dup ? '#F04452' : '#3182F6') },
+        { label: '거래비용 (추정)', el: valueCell(this.money(sel.cur, fee), null, '#8B95A1') },
+      ];
+
+      // stock info rows (US has fundamentals, KR doesn't)
+      const infoRows = [{ label: '시가총액', value: sel.cap }];
+      if (isUS) {
+        const f = this.usFund(sel.id);
+        infoRows.push({ label: 'PER', value: sel.per === '—' ? '—' : sel.per + '배' });
+        infoRows.push({ label: 'PBR', value: f.pbr === '—' ? '—' : f.pbr + '배' });
+        infoRows.push({ label: 'EPS', value: f.eps });
+        infoRows.push({ label: '배당수익률', value: sel.div });
+      }
+      infoRows.push({ label: '52주 최저~최고', value: sel.w52 });
+
+      // warnings (KR only)
+      const warns = this.country(sel) === 'KR' ? this.warnMap(sel.id).map(w => ({ label: w, meta: this.warnMeta(w) })) : [];
+
       stock = {
-        name: sel.name, ticker: sel.ticker, market: sel.market, logoBg: sel.logoBg, logoText: sel.logoText || sel.name[0],
-        priceStr: this.money(sel.cur, sel.price), about: sel.about, isHeld: sel.qty > 0,
-        changeEl: this.bigNum((up ? '▲ ' : '▼ ') + Math.abs(sel.pct).toFixed(1) + '%   ' + (up ? '+' : '-') + this.money(sel.cur, Math.abs(sel.abs)), up),
-        qtyStr: sel.qty + '주', avgStr: this.money(sel.cur, sel.avg), evalStr: this.money(sel.cur, sel.price * sel.qty),
-        gainEl: React.createElement('span', { style: { color: gup ? '#F04452' : '#3182F6', fontWeight: 700, fontSize: '14px' } }, (gup ? '+' : '') + this.money(sel.cur, g) + ' (' + (gup ? '+' : '') + gp.toFixed(1) + '%)'),
-        stats: [
-          { label: '시가총액', value: sel.cap },
-          { label: 'PER', value: sel.per === '—' ? '—' : sel.per + '배' },
-          { label: '52주 최저~최고', value: sel.w52 },
-          { label: '배당수익률', value: sel.div },
-        ],
+        name: sel.name, ticker: sel.ticker, market: sel.market, flag: this.flag(sel), logoBg: sel.logoBg, logoText: sel.logoText || sel.name[0],
+        priceStr: this.money(sel.cur, sel.price), about: sel.about, isHeld: sel.qty > 0, isUS,
+        krwConv: isUS ? ('₩' + this.fmt(sel.price * this.rate)) : null,
+        changeEl: this.bigNum((up ? '▲ ' : '▼ ') + Math.abs(sel.pct).toFixed(2) + '%   ' + (up ? '+' : '-') + this.money(sel.cur, Math.abs(sel.abs)), up),
+        volStr: this.volStr(sel), limUp: lim.up, limDown: lim.down, limBand: lim.band,
+        holdRows,
+        infoRows,
+        warns, hasWarn: warns.length > 0,
         starEl: this.star(inW, 22), starElBig: this.star(inW, 22),
         toggleWatch: () => this.toggleWatch(sel.id),
-        chart: this.makeChart(up),
-        openReport: () => this.openStockReport(sel.id),
-        reportTeaser: this.reportFor(sel, '일간').h,
+        priceChart: this.priceChartEl(sel, period, pret), volumeChart: this.volumeBarsEl(sel, period),
+        periodReturnEl: React.createElement('span', { style: { fontSize: '13px', fontWeight: 700, color: pup ? '#F04452' : '#3182F6' } }, period + ' ' + (pup ? '+' : '') + pret.toFixed(2) + '%'),
+        orderBook: this.orderBookEl(sel), trades: this.tradesEl(sel),
         hasEvent: !!selEv,
         eventText: selEv ? (selEv.y + '년 ' + (selEv.mo + 1) + '월 ' + selEv.day + '일 · ' + selEv.kind) : '',
       };
@@ -1137,6 +1378,13 @@ class Component extends DCLogic {
       ],
 
       isHome: sc === 'home', isExplore: sc === 'explore', isDetail: sc === 'detail', isAI: sc === 'ai', isWatch: sc === 'watch', isSettings: sc === 'settings',
+      periods: this.periods().map(p => {
+        const on = p === this.state.detailPeriod;
+        return { label: p, pick: () => this.setState({ detailPeriod: p }), bg: on ? '#EAF2FE' : 'transparent', color: on ? '#3182F6' : '#8B95A1', weight: on ? '700' : '600' };
+      }),
+      bookTabs: this.segToggle(['호가', '체결'], this.state.bookTab, (v) => this.setState({ bookTab: v })),
+      isBookOB: this.state.bookTab === '호가', isBookTr: this.state.bookTab === '체결',
+      bookTitle: this.state.bookTab === '호가' ? '호가 10단계' : '최근 체결',
       goHome: () => this.go('home'), goExplore: () => this.go('explore'), goWatch: () => this.go('watch'), goSettings: () => this.go('settings'),
       goAI: () => this.goAI(), back: () => this.back(),
 
