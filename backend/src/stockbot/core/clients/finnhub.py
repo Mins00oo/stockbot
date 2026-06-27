@@ -1,15 +1,18 @@
-"""Finnhub client — US stock fundamentals (free tier).
+"""Finnhub client — US stock fundamentals + company news (free tier).
 
-Only the endpoints we need for the stock-detail screen:
+Endpoints we use:
   - GET /stock/metric?symbol=&metric=all  (Basic Financials: PER/PBR/EPS/yield/52w/mktcap)
   - GET /stock/profile2?symbol=           (name/exchange/industry/logo/marketCap)
+  - GET /company-news?symbol=&from=&to=   (per-symbol news, source-tagged by symbol)
 
 Free tier: ~60 req/min, personal/non-commercial use. Auth via the ?token= query
-param. Network/HTTP errors return None so the detail screen degrades gracefully
-(price/chart/holding still render) instead of failing the whole request.
+param. Network/HTTP errors return None/[] so callers degrade gracefully (the
+detail screen still renders; the news run skips this source) instead of failing.
 """
 
 from __future__ import annotations
+
+from datetime import UTC, datetime, timedelta
 
 import httpx
 from loguru import logger
@@ -62,3 +65,32 @@ class FinnhubClient:
         """Return company profile (name, exchange, finnhubIndustry, logo,
         marketCapitalization, shareOutstanding) or None."""
         return await self._get("/stock/profile2", {"symbol": symbol})
+
+    async def get_company_news(self, symbol: str, *, days: int = 2) -> list[dict]:
+        """Return recent company news for ``symbol`` over the last ``days``.
+
+        Each item (Finnhub shape): {category, datetime(unix s), headline, id,
+        image, related(symbol), source, summary, url}. The list is already tagged
+        to ``symbol`` by the query. Returns [] when unconfigured or on any error.
+        """
+        if not self._api_key:
+            return []
+        today = datetime.now(UTC).date()
+        params = {
+            "symbol": symbol,
+            "from": str(today - timedelta(days=max(1, days))),
+            "to": str(today),
+        }
+        url = f"{self._base_url}/company-news"
+        query = {**params, "token": self._api_key}
+        try:
+            async with httpx.AsyncClient(timeout=_TIMEOUT) as client:
+                resp = await client.get(url, params=query)
+        except httpx.HTTPError as exc:
+            logger.warning("Finnhub company-news {} network error: {}", symbol, exc)
+            return []
+        if resp.status_code != 200:
+            logger.info("Finnhub company-news {} status {}", symbol, resp.status_code)
+            return []
+        body = resp.json()
+        return body if isinstance(body, list) else []

@@ -154,10 +154,37 @@
 
 ---
 
+## 3-B. 뉴스 엔드포인트 (news) — 1단계: 수집·정규화·중복제거·저장
+
+> 수집은 스케줄러가 백엔드 프로세스 안에서 주기적으로 수행(보유종목 대상, US=Finnhub·KR=네이버).
+> 아래는 **저장된 결과 조회** + **수동 트리거**. LLM 분석은 다음 단계. 셋업은 `docs/manual/08`.
+
+### ⑩ `GET /news?symbol=&limit=&offset=` — 저장된 뉴스 목록 · *newest first*
+- 쿼리: `symbol`(선택, 해당 종목 필터) · `limit`(1~200, 기본 50) · `offset`(기본 0)
+- **200**:
+  ```json
+  { "items": [ {
+      "id": 1, "source": "finnhub", "headline": "...", "url": "https://...",
+      "snippet": "...", "publishedAt": "2026-06-27T01:00:00Z",
+      "fetchedAt": "2026-06-27T01:05:00Z",
+      "tickers": [ { "symbol": "AAPL", "market": "US", "matchedBy": "source_tag" } ]
+  } ] }
+  ```
+  - `matchedBy`: `source_tag`(Finnhub 자동 태깅) | `query`(네이버 회사명 쿼리 추정).
+  - ⚠️ 저작권 정책상 **본문 미저장** — 헤드라인·원문링크·소스 snippet만.
+
+### ⑪ `POST /news/ingest/run` — 즉시 1회 수집(스케줄 무관) · *테스트/온디맨드*
+- 바디: 없음
+- **200**: `{ "fetched":N, "stored":M, "deduped":K, "symbols":S, "skipped":null }`
+  - `skipped`: 토스 미연결 등으로 건너뛰면 `"not_connected"`(에러 아님).
+
+---
+
 ## 4. 범위
 - **오늘(키연결→홈)**: health · pairing/verify · toss/connect · auth/status · portfolio/holdings (5개)
 - **종목 상세**: stocks 5개 (detail · quote · chart · orderbook · trades)
-- **나중**: stocks(검색) · market(시세·급변) · news · analysis · alerts · reports · calendar · chat 등 도메인 엔드포인트 추가 시 이 문서에 이어 작성.
+- **뉴스(1단계)**: news 2개 (목록 조회 · 수동 수집 트리거) + 백그라운드 스케줄 수집
+- **나중**: stocks(검색) · market(시세·급변) · news(분석·4부구조) · analysis · alerts · reports · calendar · chat 등 도메인 엔드포인트 추가 시 이 문서에 이어 작성.
 
 ## 5. 연동 메모
 - **프론트(axios)**: 인터셉터가 `X-Pairing-Key` 자동 첨부 + 응답 4xx/5xx에서 `error.code`로 분기, `error.message` 표시.

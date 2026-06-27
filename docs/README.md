@@ -32,3 +32,4 @@ docs/
 - 2026-06-24: 뉴스 서브시스템 상세 설계 완료(`design/news-pipeline.md` + `research/news-sources.md`).
 - 2026-06-25: 기술 스택(백엔드·프론트)·디렉토리 구조 확정(`design/tech-stack.md`). API 정의서 작성(`design/API_정의서.md`). 실행 매뉴얼(`manual/`).
 - 2026-06-25: 오늘 빌드 범위 = [키 연결 → 홈 보유목록]. 백엔드(core·auth·portfolio최소) + 프론트(온보딩·홈) 병렬 빌드 준비 완료.
+- 2026-06-27: 뉴스 파이프라인 **1단계** 구현 — 보유종목 스케줄 수집→정규화→Exact 중복제거→저장(`domain/news`, `core/scheduler.py`). 셋업: `manual/08_뉴스_수집_셋업.md`.
