@@ -20,6 +20,7 @@ from stockbot.core.db import Base
 
 # Import models so they register on Base.metadata before autogenerate runs.
 from stockbot.domain.auth import models as _auth_models  # noqa: F401
+from stockbot.domain.news import models as _news_models  # noqa: F401
 
 config = context.config
 
